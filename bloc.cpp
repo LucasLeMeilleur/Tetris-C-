@@ -46,16 +46,16 @@ bloc::~bloc(){
 }
 
 void bloc::DefinitionDeStruct(int Plage, int Pattern, int i, int j){
-     if(Plage-Pattern == 0){
+     if(Plage == 0){
         PosTot.X1 = i;
         PosTot.Y1 = j;
-    }else if(Plage-Pattern == 1){
+    }else if(Plage == 1){
         PosTot.X2 = i;
         PosTot.Y2 = j;
-    }else if(Plage-Pattern == 2){
+    }else if(Plage == 2){
         PosTot.X3 = i;
         PosTot.Y3 = j;
-    }else if(Plage-Pattern == 3){
+    }else if(Plage == 3){
         PosTot.X4 = i;
         PosTot.Y4 = j;
     }
@@ -65,40 +65,20 @@ void bloc::assembly(){
 
     const int KpatternInit = NbBloc*4;
     int Kpattern = KpatternInit;
-
-    for (int j = 0; j < 4; j++){            
-        for (int i = 0; i < 2; i++){
-            
-            if((Kpattern != KpatternInit)&&(Kpattern%4 == 0)){
-                VoirLeTableau();
-                break;
-            }
-            
-            if(PatterneApp[Kpattern]%2 == 0){
-                map[i][j] = CouleurAlea;
-                DefinitionDeStruct(Kpattern,KpatternInit,i,j);
-
-                if(Patterne[Kpattern+1] != (Patterne[Kpattern]+1)){
-                    Kpattern++;           
-                    break;
-                }     
-                Kpattern++;    
-                continue;     
-            }
-            if(PatterneApp[Kpattern]%2 == 1){
-                
-                if(i==0){
-                    map[i+1][j] = CouleurAlea;
-                    DefinitionDeStruct(Kpattern,KpatternInit,i+1,j);
-                    Kpattern++;
-                    break;
-                }
-                map[i][j] = CouleurAlea;
-                DefinitionDeStruct(Kpattern,KpatternInit,i,j);
-                Kpattern++;
-            }
-            VoirLeTableau();
+    int tab1D[8],tab2D[4][2];
+    for(int i=0;i<8;i++){
+        if(Patterne[Kpattern]==i){
+            tab1D[i]= CouleurAlea; 
+            Kpattern++;
+        }else tab1D[i]=0; 
+    }
+    int k=0, w=0;
+    for(int i=0;i<4;i++)for(int j=0;j<2;j++){
+        if(tab1D[k] >= 1){
+            DefinitionDeStruct(w,KpatternInit,j,i);
+            w++;
         }
+        map[j][i]=tab1D[k++];
     }
 }
 
@@ -120,7 +100,7 @@ bool bloc::checkLine(){
     return false;
 }
 
-void bloc::mouvement(std::string NomMouv){    
+void bloc::mouvement(std::string NomMouv){   
     if(NomMouv == "left") DeplacementGauche();
     if(NomMouv == "right") DeplacementDroite();
     if(NomMouv == "down") DeplacementBas();
@@ -330,7 +310,6 @@ void bloc::SuppLine(){
 
 void bloc::ScoreAdd(std::string TypePts, int Nbr){
     if(TypePts == "Ligne"){
-
         int PtsBase = Nbr *100;
         int ScoreTmp = PtsBase + (100*(Nbr));
         score += ScoreTmp;

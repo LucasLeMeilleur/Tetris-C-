@@ -12,18 +12,28 @@ bloc* MonblocCopy;
 
 void Deplacement(){
     while(!MonblocCopy->Perdu()){
+
         MonblocCopy->DeplacementBas();
-        sf::sleep(sf::milliseconds(MonblocCopy->VitesseBloc()));
+        
+            
+          
+        
+        
         if(MonblocCopy->DetectionBlocEnBas() || MonblocCopy->DetectionBlocEmpile()){   
-            int LigneTmp =0;      
+            std::cout << "La Detection : \n" ;
+            int LigneTmp =0;  
             while(MonblocCopy->checkLine()){
                 LigneTmp++;
-                MonblocCopy->SuppLine();   
-                MonblocCopy->ScoreAdd("Ligne", LigneTmp);            
+                MonblocCopy->SuppLine();           
             }
+            MonblocCopy->ScoreAdd("Ligne", LigneTmp);
             MonblocCopy->ResetBloc();
-        }    
+        }        
+        
+       
+        sf::sleep(sf::milliseconds(MonblocCopy->VitesseBloc()));
     }
+    
 }
 
 
@@ -42,7 +52,10 @@ int main() {
         MonblocCopy = &Monbloc;
         Monbloc.assembly();
         bool ThreadLance = false;
+        bool TouchePresse = false;
         while(1){
+
+            if(MonblocCopy->Perdu()) break;
             if (ThreadLance == false){ 
                 threadDeplacement.launch();
                 ThreadLance = true;
@@ -63,18 +76,36 @@ int main() {
                 if(!Monbloc.DetectionBlocEmpile()){
                     Monbloc.mouvement("down");
                     Monbloc.ScoreAdd("DescenteRapide", 0);
-                }else MonblocCopy->ResetBloc();
+                }
             }
-            if(Monbloc.checkLine()) std::cout << "Ligne Complete";
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if(!TouchePresse){
+                    Monbloc.VoirLeTableau();
+                    Monbloc.RotationBloc();
+                    TouchePresse=true;
+                }
+                
+            }
+            else TouchePresse = false;
+            // if(Monbloc.checkLine()){
+            //     Monbloc.SuppLine();
+            //     std::cout << "Ligne Complete";
+
+            // } 
+
 
             window.clear();
             Monbloc.DessinerLeTableau();  
-            Monbloc.VoirLeTableau();
             window.display();
-            sf::sleep(sf::milliseconds(100));        
+
+
+            MonblocCopy->VoirLeTableau();
+            sf::sleep(sf::milliseconds(150));        
         }
+        threadDeplacement.terminate();
         Monbloc.VoirLeTableau();
-        std::cout << "\n\r Voici ton score : " << Monbloc.Score() << "\n";
+        std::cout << "\n\r---------- PERDU ! ----------";
+        std::cout << "\n\n\rVoici ton score : " << Monbloc.Score() << "\n";
         break;
     }    
     return 0;

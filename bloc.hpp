@@ -21,6 +21,7 @@ class bloc{
         LesPos PosTot;
         bool VPerdu= false;
         int Niveau=0, LigneDetruite=0, Vitesse=0;
+        int rotation=0;
         
 
 
@@ -56,4 +57,11 @@ class bloc{
         inline void Effacer(){ AddrWindow->clear();};
         inline void Dessiner(){ AddrWindow->display();};
         bool DetectionBlocEmpile();
+        void RotationBloc();
+        bool CheckLineLineRotateH(int (&Tab)[4][4]);
+        bool CheckLineLineRotateV(int (&Tab)[4][4]);
+        void SuppLineRotateH(int Tab[4][4]);
+        void SuppLineRotateV(int Tab[4][4]);
+
+
 };

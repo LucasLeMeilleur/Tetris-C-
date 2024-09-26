@@ -83,6 +83,8 @@ void bloc::assembly(){
 }
 
 bool bloc::checkLine(){
+
+    std::cout << "Checklined : \n";
     for(int i = 0; i<24; i++){
         int compteur = 0;
         for(int j = 0; j<9; j++){
@@ -90,12 +92,10 @@ bool bloc::checkLine(){
             if(map[j][i] == 0) break;
             if(compteur == 9) {
                 LigneComplete = i;
- 
                 return true;
             }
         }
-    }   
-    
+    }      
 
     return false;
 }
@@ -105,7 +105,6 @@ void bloc::mouvement(std::string NomMouv){
     if(NomMouv == "right") DeplacementDroite();
     if(NomMouv == "down") DeplacementBas();
 }
-
 
 void bloc::DrawTiles(){
     AddrWindow->draw(Tiles);
@@ -136,20 +135,14 @@ void bloc::Ajouter(int X, int Y, int  Nbr){
 }
 
 void bloc::DeplacementBas(){
-
-        
-
-
     if(
         ( (PosTot.Y1 >= 0 && PosTot.Y1 < 23) && (PosTot.Y2 >= 0 && PosTot.Y2 < 23) && (PosTot.Y3 >= 0 && PosTot.Y3 < 23) && (PosTot.Y4 >= 0 && PosTot.Y4 < 23))
         &&
-        (      ((map[PosTot.X1][PosTot.Y1+1] == 0) || PosTot.Y1+1 == PosTot.Y2 || PosTot.Y1+1 == PosTot.Y3)
+        (      ((map[PosTot.X1][PosTot.Y1+1] == 0) || PosTot.Y1+1 == PosTot.Y2 || PosTot.Y1+1 == PosTot.Y3 || PosTot.Y1+1 == PosTot.Y4)
             && ((map[PosTot.X2][PosTot.Y2+1] == 0) || PosTot.Y2+1 == PosTot.Y3 || PosTot.Y2+1 == PosTot.Y4) 
             && ((map[PosTot.X3][PosTot.Y3+1] == 0) || (PosTot.Y3+1 == PosTot.Y4 && PosTot.X3-1 == PosTot.X4) || (PosTot.Y3+1 == PosTot.Y4 && PosTot.X3 == PosTot.X4))
-            && ((map[PosTot.X4][PosTot.Y4+1] == 0))
-        
+            && ((map[PosTot.X4][PosTot.Y4+1] == 0) || PosTot.Y4+1 == PosTot.Y1)      
         )
-    
     ){
         Ajouter(PosTot.X1,PosTot.Y1, 0);
         Ajouter(PosTot.X2,PosTot.Y2, 0);
@@ -163,23 +156,20 @@ void bloc::DeplacementBas(){
 
         PosTot.Y1++;PosTot.Y2++;PosTot.Y3++;PosTot.Y4++;
     }
-
 }
 
 void bloc::DeplacementDroite(){
-
-
     if(
         (PosTot.X1 < 8 && PosTot.X2 < 8 && PosTot.X3 < 8 && PosTot.X4 <8)
         &&
         (      ((map[PosTot.X1+1][PosTot.Y1] == 0) || PosTot.X1+1 == PosTot.X2)
             && ((map[PosTot.X2+1][PosTot.Y2] == 0) || PosTot.X2+1 == PosTot.X3) 
             && ((map[PosTot.X3+1][PosTot.Y3] == 0) || PosTot.X3+1 == PosTot.X4)
-            && ((map[PosTot.X4+1][PosTot.Y4] == 0))
-        
+            && ((map[PosTot.X4+1][PosTot.Y4] == 0) )
         )   
+    )
+    {
 
-    ){
         Ajouter(PosTot.X1,PosTot.Y1, 0);
         Ajouter(PosTot.X2,PosTot.Y2, 0);
         Ajouter(PosTot.X3,PosTot.Y3, 0);
@@ -192,14 +182,9 @@ void bloc::DeplacementDroite(){
 
         PosTot.X1++; PosTot.X2++; PosTot.X3++; PosTot.X4++; 
     }
-
-    
-
 }
 
 void bloc::DeplacementGauche(){
-
-
     if(        
         (PosTot.X1 >= 1 && PosTot.X2 >= 1 && PosTot.X3 >= 1 && PosTot.X4 >= 1)
         &&
@@ -209,7 +194,6 @@ void bloc::DeplacementGauche(){
             && ((map[PosTot.X4-1][PosTot.Y4] == 0) || PosTot.X4-1 == PosTot.X3)
         )   
     ){
-
         Ajouter(PosTot.X4,PosTot.Y4, 0);
         Ajouter(PosTot.X3,PosTot.Y3, 0);
         Ajouter(PosTot.X1,PosTot.Y1, 0);
@@ -246,6 +230,7 @@ void bloc::BlocAleatoire(){
 
 bool bloc::DetectionBlocEnBas(){
     if(PosTot.Y4 == 23 || PosTot.Y1 == 23 || PosTot.Y2 == 23 || PosTot.Y3 == 23) return true;
+    
     return false;
 }
 
@@ -258,6 +243,17 @@ bool bloc::DetectionBlocEmpile(){
 }
 
 void bloc::ResetBloc(){
+    const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
+    const int* Y[] = {&PosTot.Y1, &PosTot.Y2, &PosTot.Y3, &PosTot.Y4};
+    
+    for(int i = 0; i < 4 ; i++){
+        if(*Y[i] <= 4 ){
+            VPerdu = true;
+            break;
+        }
+    }
+
+    rotation =0;
     InitialiserPOS();
     RegenererBloc();
 }
@@ -291,6 +287,7 @@ void bloc::SuppLine(){
     for (int i = 0; i < 24; i++){
         for (int j = 0; j < 9; j++) mapAnnexe[j][i] = map[j][i];  
     }
+
     for(int i = 0; i<24; i++){
         int compteur = 0;
         for(int j = 0; j<9; j++){
@@ -301,9 +298,11 @@ void bloc::SuppLine(){
             }
         }
     } 
-    for(int i = 0; i<9 ; i++){
-        for (int j= 2; j < LigneComplete+1; j++){
-            map[i][j] = mapAnnexe[i][j-1];    
+
+
+    for(int i = LigneComplete; i>0; i--){
+        for (int j= 1; j < 9; j++){
+            map[j][i] = mapAnnexe[j][i-1];  
         }       
     }
 }
@@ -315,15 +314,455 @@ void bloc::ScoreAdd(std::string TypePts, int Nbr){
         score += ScoreTmp;
     }
 
-    if(TypePts == "DescenteRapide"){
+    else if(TypePts == "DescenteRapide"){
         score += Niveau*1;
     }
 
-    if(TypePts == "DescenteNow"){
+    else if(TypePts == "DescenteNow"){
         score += Niveau*2;
     }
 }
 
 void bloc::ChangementNiveau(){
     if((Niveau+1)*10 == LigneDetruite) Niveau++;
+}
+
+void bloc::RotationBloc(){
+
+    
+
+    if(NbBloc == 6) return;
+    if((NbBloc == 0) && (PosTot.X1 >= 6)) return;
+    if((NbBloc == 0) && (rotation == 1) && (PosTot.Y4 >= 19)) return;
+
+    if((NbBloc !=1 ) && (PosTot.X1 >= 7))return;
+    if((NbBloc !=1 ) && (rotation == 1) && (PosTot.Y4 >= 20))return;
+
+    std::cout << "Rotation " << rotation;
+
+    
+
+    int tab16Cases[4][4], tab16CasesR[4][4], tab2D[2][4];
+    const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
+    const int* Y[] = {&PosTot.Y1, &PosTot.Y2, &PosTot.Y3, &PosTot.Y4};
+    int XPlusPtit= *X[0], YPlusPtit= *Y[0];
+
+    for (int i = 0; i < 4; i++){
+        if(*X[i]<XPlusPtit) XPlusPtit = *X[i];
+    }
+    for (int i = 0; i < 4; i++){
+        if(*Y[i]<YPlusPtit) YPlusPtit = *Y[i];
+    }
+
+    //Si bloc dans la rangée alors on ne fait pas
+
+    if(NbBloc == 0){
+        if(rotation == 0){
+            for (int i = YPlusPtit; i < YPlusPtit+2; i++){
+                for (int j = XPlusPtit+2; j < XPlusPtit+4; j++){
+                    if(map[j][i] >0 ) return;
+                }   
+            }
+        }
+        if(rotation == 1){
+            for (int i = YPlusPtit+2; i < YPlusPtit+4; i++){
+                for (int j = XPlusPtit; j < XPlusPtit+2; j++){
+                    if(map[j][i] >0 ) return;
+                }   
+            }
+        }
+    }
+    else{
+        if(rotation == 0){
+            for (int i = YPlusPtit; i < YPlusPtit+2; i++){
+                for (int j = XPlusPtit+2; j < XPlusPtit+3; j++){
+                    if(map[j][i] >0 ) return;
+                }   
+            }
+        }
+        if(rotation == 1){
+            for (int i = YPlusPtit+2; i < YPlusPtit+3; i++){
+                for (int j = XPlusPtit; j < XPlusPtit+2; j++){
+                    if(map[j][i] >0 ) return;
+                }   
+            }
+        }
+    }
+
+
+
+    //Initialiser le tableau Pour rotate
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            tab16Cases[j][i] = 0;
+        }
+    }
+
+    //On initialise tab16case avec map
+
+    if(NbBloc == 0){
+        if(rotation == 0){
+            for(int i = 0; i < 4; i++){
+                for(int j = 0; j < 2; j++){
+                tab16Cases[j][i] = map[XPlusPtit+j][YPlusPtit+i];
+                }
+            }
+        }
+        else if(rotation == 1){
+            for(int i = 0; i < 2; i++){
+                for(int j = 0; j < 4; j++){
+                tab16Cases[j][i] = map[XPlusPtit+j][YPlusPtit+i];
+                }
+            }
+        }
+    }
+    else{
+        if(rotation == 0){
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 2; j++){
+                tab16Cases[j][i] = map[XPlusPtit+j][YPlusPtit+i];
+                }
+            }
+        }
+        else if(rotation == 1){
+            for(int i = 0; i < 2; i++){
+                for(int j = 0; j < 3; j++){
+                tab16Cases[j][i] = map[XPlusPtit+j][YPlusPtit+i];
+                }
+            }
+        }
+    }
+
+
+    //Rotation
+
+    for(int i=0;i<4;i++)for(int j=0;j<4;j++) tab16CasesR[j][3-i]=tab16Cases[i][j];
+    for(int i=0;i<4;i++)for(int j=0;j<4;j++) tab16Cases[j][i]=tab16CasesR[j][i];
+    
+
+
+    while(CheckLineLineRotateH(tab16Cases)) SuppLineRotateH(tab16Cases);
+    while(CheckLineLineRotateV(tab16Cases)) SuppLineRotateV(tab16Cases);
+
+
+    // Efface le contenu de map 
+
+    if(NbBloc == 0){
+        for (int i = YPlusPtit; i < YPlusPtit+4; i++){
+            for(int j = XPlusPtit; j < XPlusPtit+2; j++){
+                map[j][i] = 0;
+            }
+        }
+        
+        for (int i = YPlusPtit; i < YPlusPtit+2; i++){
+            for(int j = XPlusPtit; j < XPlusPtit+4; j++){
+                map[j][i] = 0;
+            }
+        }
+    }
+    else{
+        for (int i = YPlusPtit; i < YPlusPtit+3; i++){
+            for(int j = XPlusPtit; j < XPlusPtit+2; j++){
+                map[j][i] = 0;
+            }
+        }
+        
+        for (int i = YPlusPtit; i < YPlusPtit+2; i++){
+            for(int j = XPlusPtit; j < XPlusPtit+3; j++){
+                map[j][i] = 0;
+            }
+        }
+    }
+
+    // Tab dans map
+
+    if(NbBloc == 0){
+        for (int i = YPlusPtit; i < YPlusPtit+4; i++){
+            for(int j = XPlusPtit; j < XPlusPtit+2; j++){
+                map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
+            }
+        }
+
+        for (int i = YPlusPtit; i < YPlusPtit+2; i++){
+            for(int j = XPlusPtit; j < XPlusPtit+4; j++){
+                map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
+            }
+        }
+    }
+    else{
+        for (int i = YPlusPtit; i < YPlusPtit+3; i++){
+            for(int j = XPlusPtit; j < XPlusPtit+2; j++){
+                map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
+            }
+        }
+
+        for (int i = YPlusPtit; i < YPlusPtit+2; i++){
+            for(int j = XPlusPtit; j < XPlusPtit+3; j++){
+                map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
+            }
+        }  
+    }
+    
+    
+    int k = 0;
+    std::cout << "Le Plus petit" << XPlusPtit << YPlusPtit << "\n";
+    
+
+    std::cout << "Les Y Puis X : " << PosTot.Y1 << PosTot.Y2 << PosTot.Y3 << PosTot.Y4 << "  "<<  PosTot.X1 << PosTot.X2 << PosTot.X3 << PosTot.X4 << "\n";
+
+
+    //Initiation des poses en fonction du bloc (a optimiser si pas flemme):
+
+    if(NbBloc == 0){
+        if(rotation == 0){
+            for (int i = YPlusPtit; i < YPlusPtit+2; i++){
+                for(int j = XPlusPtit; j < XPlusPtit+4; j++){
+                    if(map[j][i] > 0){
+                        if(k == 0){
+                            PosTot.X1 = j;
+                            PosTot.Y1 = i;
+                            k++;
+                        }
+                        else if(k == 1){
+                            PosTot.X2 = j;
+                            PosTot.Y2 = i;    
+                            k++;    
+
+                        }
+                        else if(k == 2){
+                            PosTot.X3 = j;
+                            PosTot.Y3 = i;
+                            k++;                 
+                        }
+                        else if(k == 3){              
+                            PosTot.X4 = j;
+                            PosTot.Y4 = i;
+                            k++;
+                        }
+                        else if(k == 4){
+                            break;
+                        } 
+                    } 
+                }
+                if(k >=4) break;
+            }
+        }
+        else if(rotation == 1){
+            for (int i = YPlusPtit; i < YPlusPtit+4; i++){
+                for(int j = XPlusPtit; j < XPlusPtit+2; j++){
+                    if(map[j][i] > 0){
+                        if(k == 0){
+                            PosTot.X1 = j;
+                            PosTot.Y1 = i;
+                            k++;
+                        }
+                        else if(k == 1){
+                            PosTot.X2 = j;
+                            PosTot.Y2 = i;    
+                            k++;    
+
+                        }
+                        else if(k == 2){
+                            PosTot.X3 = j;
+                            PosTot.Y3 = i;
+                            k++;                 
+                        }
+                        else if(k == 3){              
+                            PosTot.X4 = j;
+                            PosTot.Y4 = i;
+                            k++;
+                        }
+                        else if(k == 4){
+                            break;
+                        } 
+                    } 
+                }
+                if(k >=4) break;
+            }
+            
+        }
+    }
+    else{
+        if(rotation == 0){
+            for (int i = YPlusPtit; i < YPlusPtit+2; i++){
+                for(int j = XPlusPtit; j < XPlusPtit+3; j++){
+                    if(map[j][i] > 0){
+                        if(k == 0){
+                            PosTot.X1 = j;
+                            PosTot.Y1 = i;
+                            k++;
+                        }
+                        else if(k == 1){
+                            PosTot.X2 = j;
+                            PosTot.Y2 = i;    
+                            k++;    
+
+                        }
+                        else if(k == 2){
+                            PosTot.X3 = j;
+                            PosTot.Y3 = i;
+                            k++;                 
+                        }
+                        else if(k == 3){              
+                            PosTot.X4 = j;
+                            PosTot.Y4 = i;
+                            k++;
+                        }
+                        else if(k == 4){
+                            break;
+                        } 
+                    } 
+                }
+                if(k >=4) break;
+            }
+
+        }
+        else if(rotation == 1){
+            for (int i = YPlusPtit; i < YPlusPtit+3; i++){
+                for(int j = XPlusPtit; j < XPlusPtit+2; j++){
+                    if(map[j][i] > 0){
+                        if(k == 0){
+                            PosTot.X1 = j;
+                            PosTot.Y1 = i;
+                            k++;
+                        }
+                        else if(k == 1){
+                            PosTot.X2 = j;
+                            PosTot.Y2 = i;    
+                            k++;    
+
+                        }
+                        else if(k == 2){
+                            PosTot.X3 = j;
+                            PosTot.Y3 = i;
+                            k++;                 
+                        }
+                        else if(k == 3){              
+                            PosTot.X4 = j;
+                            PosTot.Y4 = i;
+                            k++;
+                        }
+                        else if(k == 4){
+                            break;
+                        } 
+                    } 
+                }
+                if(k >=4) break;
+            }
+        }
+
+    }
+
+    
+    for(int i = YPlusPtit; i < YPlusPtit+4; i++){
+        for (int j = XPlusPtit; j < XPlusPtit+4; j++){
+            std::cout << map[j][i];
+        }
+        std::cout << "\n";
+        
+    }
+
+    rotation++;
+    rotation %= 2;
+    std::cout << "Les Y Puis X : " << PosTot.Y1 << PosTot.Y2 << PosTot.Y3 << PosTot.Y4 << "  "<<  PosTot.X1 << PosTot.X2 << PosTot.X3 << PosTot.X4 << "\n";
+}
+
+bool bloc::CheckLineLineRotateH(int (&Tab)[4][4]){
+
+    std::cout << "CheckLine H \n";
+    int Count = 0;
+    bool Finito = true;
+
+    for(int i=0;i<4;i++){
+        Count = 0;
+        for(int j=0;j<4;j++){ 
+            std::cout << Tab[j][i];
+            if(i == 0 && (Tab[j][i] >= 1)){
+                Finito = true;
+                break;
+            }
+            if(Tab[j][i] == 0) Count++;
+            else break;
+        }         
+        std::cout << Count << "\n";
+        if(Count == 4) return true;
+        if (Finito) break;
+    }
+    std::cout << "Faux \n";
+    return false;
+}
+
+bool bloc::CheckLineLineRotateV(int (&Tab)[4][4]){
+
+    int Count = 0;
+    bool Finito = false;
+
+    for(int j=0;j<4;j++){
+        Count = 0;
+        for(int i=0;i<4;i++){ 
+            if(j == 0 && (Tab[i][j] >= 1)){
+                Finito = true;
+                break;
+            }
+            else if(Tab[i][j] == 0) Count++;
+            else break;
+        }
+        if (Finito) break;
+        if(Count == 4){
+            return true;
+        }
+        
+
+    }
+    std::cout << "FauxV \n" ;
+    return false;
+}
+
+void bloc::SuppLineRotateH(int Tab[4][4]){
+
+    int Tab2[4][4];
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){ 
+            Tab2[i][j] = Tab[i][j];
+        }
+    }
+
+    for(int i=0;i<4;i++){
+        for(int j=1;j<4;j++){ 
+            Tab[i][j] = 0; 
+        } 
+    }
+
+
+    for(int i=0;i<4;i++){
+        for(int j=1;j<4;j++){ 
+            Tab[i][j-1] = Tab2[i][j]; 
+        } 
+    }
+
+}
+
+void bloc::SuppLineRotateV(int Tab[4][4]) {
+
+    int Tab2[4][4];
+    
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){ 
+            Tab2[i][j] = Tab[i][j];
+        }
+    }
+    
+    for(int i=0;i<4;i++){
+        for(int j=1;j<4;j++){ 
+            Tab[i][j] = 0; 
+        } 
+    }
+
+
+    for(int i=i;i<4;i++){
+        for(int j=0;j<4;j++){ 
+            Tab[i-1][j] = Tab2[i][j]; 
+        } 
+    }
+
 }

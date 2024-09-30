@@ -153,8 +153,10 @@ int main() {
             textScore.setString(Monbloc.Score());
             textNiveau.setString(Monbloc.AfficherNiveau());
             window.clear();
+
             Monbloc.DessinerLeTableau();
             Monbloc.next();
+
             window.draw(textNiveau);  
             window.draw(textScore); 
             window.draw(textNextPiece);
@@ -163,9 +165,7 @@ int main() {
             WallMaker(Wall);
             CadreNextMaker(Wall);
             window.display();
-
-
-            MonblocCopy->VoirLeTableau();
+            
             sf::sleep(sf::milliseconds(150));        
         }
         threadDeplacement.terminate();

@@ -11,28 +11,26 @@ class bloc{
         sf::Sprite Tiles;
         sf::Vector2f position;
         int PatterneApp[28];
-        int PosX =0, PosY= 0;
-        int CouleurAlea, LigneComplete, NbBloc;
+        int CouleurAlea, CouleurAleaSuivant, LigneComplete, NbBloc, NbBlocSuivant;
         int TabX, TabY, Rotation;
         struct LesPos{
-            int X1; int X2; int X3; int X4;
-            int Y1,Y2,Y3,Y4;
+            int X1,X2,X3,X4,Y1,Y2,Y3,Y4;
         };
         LesPos PosTot;
         bool VPerdu= false;
-        int Niveau=0, LigneDetruite=0, Vitesse=0;
-        int rotation=0;
-        
+        int Niveau=0, LigneDetruite=0, Vitesse=0,rotation=0;
 
 
     public:
         bloc(const sf::Texture& Textruc ,sf::RenderWindow &window, float initialX, float initialY);
         ~bloc();
         void assembly();
+        void next();
         void mouvement(std::string NomMouv);
         bool checkLine();
         void SuppLine();
-        inline int Score(){ return score;};
+        std::string Score();
+        std::string AfficherNiveau();
         void ScoreAdd(std::string TypePts, int Nbr);
         void DrawTiles();
         void drawASprite(sf::Sprite &Tile);
@@ -62,6 +60,5 @@ class bloc{
         bool CheckLineLineRotateV(int (&Tab)[4][4]);
         void SuppLineRotateH(int Tab[4][4]);
         void SuppLineRotateV(int Tab[4][4]);
-
-
+        inline int AfficherBlocSuivant(){ return NbBlocSuivant; };
 };

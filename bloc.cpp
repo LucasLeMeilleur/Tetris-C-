@@ -61,11 +61,13 @@ void bloc::DefinitionDeStruct(int Plage, int Pattern, int i, int j){
     }
 }
 
+
+
 void bloc::assembly(){
 
     const int KpatternInit = NbBloc*4;
     int Kpattern = KpatternInit;
-    int tab1D[8],tab2D[4][2];
+    int tab1D[8];
     for(int i=0;i<8;i++){
         if(Patterne[Kpattern]==i){
             tab1D[i]= CouleurAlea; 
@@ -82,9 +84,35 @@ void bloc::assembly(){
     }
 }
 
+void bloc::next(){
+
+   
+    const int KpatternInit = NbBlocSuivant*4;
+    int Kpattern = KpatternInit, k=0, w=0;
+    int tab1D[8],tab2D[4][2];
+    for(int i=0;i<8;i++){
+        if(Patterne[Kpattern]==i){
+            tab1D[i]= CouleurAleaSuivant; 
+            Kpattern++;
+        }else tab1D[i]=0; 
+    }     
+
+    for(int i=0;i<4;i++)for(int j=0;j<2;j++) tab2D[i][j]=tab1D[k++];
+
+    for(int i=0;i<4;i++)for(int j=0;j<2;j++){        
+        if(tab2D[i][j] >= 1){
+            Tiles.setTextureRect(sf::IntRect(18*CouleurAleaSuivant,0,18,18));
+            Tiles.setPosition(sf::Vector2f((618+(j*18)),(136+(i*18))));
+            AddrWindow->draw(Tiles);
+        }
+    }
+
+}
+
+
 bool bloc::checkLine(){
 
-    std::cout << "Checklined : \n";
+    //std::cout << "Checklined : \n";
     for(int i = 0; i<24; i++){
         int compteur = 0;
         for(int j = 0; j<9; j++){
@@ -139,9 +167,9 @@ void bloc::DeplacementBas(){
         ( (PosTot.Y1 >= 0 && PosTot.Y1 < 23) && (PosTot.Y2 >= 0 && PosTot.Y2 < 23) && (PosTot.Y3 >= 0 && PosTot.Y3 < 23) && (PosTot.Y4 >= 0 && PosTot.Y4 < 23))
         &&
         (      ((map[PosTot.X1][PosTot.Y1+1] == 0) || PosTot.Y1+1 == PosTot.Y2 || PosTot.Y1+1 == PosTot.Y3 || PosTot.Y1+1 == PosTot.Y4)
-            && ((map[PosTot.X2][PosTot.Y2+1] == 0) || PosTot.Y2+1 == PosTot.Y3 || PosTot.Y2+1 == PosTot.Y4) 
+            && ((map[PosTot.X2][PosTot.Y2+1] == 0) || PosTot.Y2+1 == PosTot.Y3 || (PosTot.Y2+1 == PosTot.Y4 && PosTot.X2 == PosTot.X4)) 
             && ((map[PosTot.X3][PosTot.Y3+1] == 0) || (PosTot.Y3+1 == PosTot.Y4 && PosTot.X3-1 == PosTot.X4) || (PosTot.Y3+1 == PosTot.Y4 && PosTot.X3 == PosTot.X4))
-            && ((map[PosTot.X4][PosTot.Y4+1] == 0) || PosTot.Y4+1 == PosTot.Y1)      
+            && ((map[PosTot.X4][PosTot.Y4+1] == 0) || (PosTot.Y4+1 == PosTot.Y1 && PosTot.X1 == PosTot.X4))      
         )
     ){
         Ajouter(PosTot.X1,PosTot.Y1, 0);
@@ -215,17 +243,19 @@ void bloc::InitialiserPOS(){
 }
 
 void bloc::RegenererBloc(){
+    NbBloc = NbBlocSuivant;
+    CouleurAlea = CouleurAleaSuivant;
     CouleurAleatoire();
     BlocAleatoire();
     assembly();
 }
 
 void bloc::CouleurAleatoire(){
-    CouleurAlea = rand() %6 + 1;
+    CouleurAleaSuivant = rand() %6 + 1;
 }
 
 void bloc::BlocAleatoire(){
-    NbBloc = rand() % 7;
+    NbBlocSuivant = rand() % 7;
 }
 
 bool bloc::DetectionBlocEnBas(){
@@ -259,12 +289,12 @@ void bloc::ResetBloc(){
 }
 
 void bloc::VoirLeTableau(){
-    std::cout <<"\n\n";
+    //std::cout <<"\n\n";
     for(int i =0; i <24 ; i++){
         for(int j=0 ; j<9; j++){
-            std::cout << map[j][i];
+            //std::cout << map[j][i];
         }       
-        std::cout << "\n";
+        //std::cout << "\n";
     }
 }
 
@@ -280,6 +310,7 @@ bool bloc::Perdu(){
 
 void bloc::SuppLine(){
 
+    std::cout << LigneDetruite;
     LigneDetruite++;
     int LigneComplete = 0;
     int mapAnnexe[9][24];
@@ -301,7 +332,7 @@ void bloc::SuppLine(){
 
 
     for(int i = LigneComplete; i>0; i--){
-        for (int j= 1; j < 9; j++){
+        for (int j= 0; j < 9; j++){
             map[j][i] = mapAnnexe[j][i-1];  
         }       
     }
@@ -310,21 +341,23 @@ void bloc::SuppLine(){
 void bloc::ScoreAdd(std::string TypePts, int Nbr){
     if(TypePts == "Ligne"){
         int PtsBase = Nbr *100;
-        int ScoreTmp = PtsBase + (100*(Nbr));
+        
+        int ScoreTmp = PtsBase + (100*(Nbr-1));
         score += ScoreTmp;
     }
 
     else if(TypePts == "DescenteRapide"){
-        score += Niveau*1;
+        
+        score += (Niveau+1)*1;
     }
 
     else if(TypePts == "DescenteNow"){
-        score += Niveau*2;
+        score += (Niveau+1)*2;
     }
 }
 
 void bloc::ChangementNiveau(){
-    if((Niveau+1)*10 == LigneDetruite) Niveau++;
+    if((Niveau+1)*5 == LigneDetruite) Niveau++;
 }
 
 void bloc::RotationBloc(){
@@ -338,7 +371,7 @@ void bloc::RotationBloc(){
     if((NbBloc !=1 ) && (PosTot.X1 >= 7))return;
     if((NbBloc !=1 ) && (rotation == 1) && (PosTot.Y4 >= 20))return;
 
-    std::cout << "Rotation " << rotation;
+    //std::cout << "Rotation " << rotation;
 
     
 
@@ -502,16 +535,10 @@ void bloc::RotationBloc(){
             }
         }  
     }
-    
-    
+
     int k = 0;
-    std::cout << "Le Plus petit" << XPlusPtit << YPlusPtit << "\n";
-    
 
-    std::cout << "Les Y Puis X : " << PosTot.Y1 << PosTot.Y2 << PosTot.Y3 << PosTot.Y4 << "  "<<  PosTot.X1 << PosTot.X2 << PosTot.X3 << PosTot.X4 << "\n";
-
-
-    //Initiation des poses en fonction du bloc (a optimiser si pas flemme):
+    //Initiation des poses en fonction du bloc (a optimiser si pas flemme) switch case:
 
     if(NbBloc == 0){
         if(rotation == 0){
@@ -656,27 +683,27 @@ void bloc::RotationBloc(){
     
     for(int i = YPlusPtit; i < YPlusPtit+4; i++){
         for (int j = XPlusPtit; j < XPlusPtit+4; j++){
-            std::cout << map[j][i];
+            //std::cout << map[j][i];
         }
-        std::cout << "\n";
+        //std::cout << "\n";
         
     }
 
     rotation++;
     rotation %= 2;
-    std::cout << "Les Y Puis X : " << PosTot.Y1 << PosTot.Y2 << PosTot.Y3 << PosTot.Y4 << "  "<<  PosTot.X1 << PosTot.X2 << PosTot.X3 << PosTot.X4 << "\n";
+    //std::cout << "Les Y Puis X : " << PosTot.Y1 << PosTot.Y2 << PosTot.Y3 << PosTot.Y4 << "  "<<  PosTot.X1 << PosTot.X2 << PosTot.X3 << PosTot.X4 << "\n";
 }
 
 bool bloc::CheckLineLineRotateH(int (&Tab)[4][4]){
 
-    std::cout << "CheckLine H \n";
+    //std::cout << "CheckLine H \n";
     int Count = 0;
     bool Finito = true;
 
     for(int i=0;i<4;i++){
         Count = 0;
         for(int j=0;j<4;j++){ 
-            std::cout << Tab[j][i];
+            //std::cout << Tab[j][i];
             if(i == 0 && (Tab[j][i] >= 1)){
                 Finito = true;
                 break;
@@ -684,11 +711,11 @@ bool bloc::CheckLineLineRotateH(int (&Tab)[4][4]){
             if(Tab[j][i] == 0) Count++;
             else break;
         }         
-        std::cout << Count << "\n";
+        //std::cout << Count << "\n";
         if(Count == 4) return true;
         if (Finito) break;
     }
-    std::cout << "Faux \n";
+    //std::cout << "Faux \n";
     return false;
 }
 
@@ -714,7 +741,7 @@ bool bloc::CheckLineLineRotateV(int (&Tab)[4][4]){
         
 
     }
-    std::cout << "FauxV \n" ;
+    //std::cout << "FauxV \n" ;
     return false;
 }
 
@@ -744,8 +771,7 @@ void bloc::SuppLineRotateH(int Tab[4][4]){
 
 void bloc::SuppLineRotateV(int Tab[4][4]) {
 
-    int Tab2[4][4];
-    
+    int Tab2[4][4];    
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){ 
             Tab2[i][j] = Tab[i][j];
@@ -758,11 +784,20 @@ void bloc::SuppLineRotateV(int Tab[4][4]) {
         } 
     }
 
-
     for(int i=i;i<4;i++){
         for(int j=0;j<4;j++){ 
             Tab[i-1][j] = Tab2[i][j]; 
         } 
     }
 
+}
+
+std::string bloc::Score(){
+    std::string msg = "Score : " + std::to_string(score);
+    return msg;
+}
+
+std::string bloc::AfficherNiveau(){
+    std::string msg = "Niveau : " + std::to_string(Niveau);
+    return msg;
 }

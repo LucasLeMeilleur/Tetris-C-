@@ -7,13 +7,14 @@ class bloc{
         sf::RenderWindow* AddrWindow;
         sf::Sprite Tiles;
         sf::Vector2f position;
-        bool VPerdu= false;
-        int Niveau=0, LigneDetruite=0, Vitesse=0,rotation=0, score=0;
-        int map[9][24], Patterne[28], PatterneApp[28], CouleurAlea, CouleurAleaSuivant, LigneComplete, NbBloc, NbBlocSuivant, TabX, TabY;
+
+        int score =0, Niveau=0, LigneDetruite=0, Vitesse=0,rotation=0, BlocSaved = 8, CouleurSaved;
+        int Patterne[28], map[9][24], PatterneApp[28], TabX, TabY, Rotation, CouleurAlea, CouleurAleaSuivant, LigneComplete, NbBloc, NbBlocSuivant;
         struct LesPos{
             int X1,X2,X3,X4,Y1,Y2,Y3,Y4;
         };
         LesPos PosTot;
+        bool VPerdu= false;
 
 
     public:
@@ -56,4 +57,8 @@ class bloc{
         void SuppLineRotateH(int Tab[4][4]);
         void SuppLineRotateV(int Tab[4][4]);
         inline int AfficherBlocSuivant(){ return NbBlocSuivant; };
+        inline int AfficherBlocSaved(){ return BlocSaved;};
+        void ChangerBloc();
+        void RemplacerBlocSave();
+        void Saved();
 };

@@ -86,6 +86,8 @@ int main() {
     sf::Text textScore;
     sf::Text textNiveau;
     sf::Text textNextPiece;
+    sf::Text textBlocSaved;
+    SetText(textBlocSaved, font, 150, 70);
     SetText(textNextPiece, font, 582, 70);
     SetText(textScore, font, 582, 300);
     SetText(textNiveau, font, 582, 250);
@@ -139,6 +141,9 @@ int main() {
                     Monbloc.ScoreAdd("DescenteRapide", 0);
                 }
             }
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+                    Monbloc.ChangerBloc();
+            }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
                 if(!TouchePresse){
                     Monbloc.VoirLeTableau();
@@ -152,20 +157,22 @@ int main() {
             Monbloc.ChangementNiveau();
             textScore.setString(Monbloc.Score());
             textNiveau.setString(Monbloc.AfficherNiveau());
+            textBlocSaved.setString(std::to_string(Monbloc.AfficherBlocSaved()));
             window.clear();
-
             Monbloc.DessinerLeTableau();
             Monbloc.next();
-
+            Monbloc.Saved();
             window.draw(textNiveau);  
             window.draw(textScore); 
             window.draw(textNextPiece);
-            
+            window.draw(textBlocSaved);
 
             WallMaker(Wall);
             CadreNextMaker(Wall);
             window.display();
-            
+
+
+            MonblocCopy->VoirLeTableau();
             sf::sleep(sf::milliseconds(150));        
         }
         threadDeplacement.terminate();

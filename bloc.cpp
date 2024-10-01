@@ -15,7 +15,8 @@ bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow &window, float initialX
     AddrWindow = &window;    
     Tiles.setTextureRect(sf::IntRect(0,0,18,18));
     Tiles.setPosition(initialX, initialY);
-    TabX = initialX; TabY = initialY;
+    TabX = initialX;
+    TabY = initialY;
 
     int PatterneA[28] = { 
                  0,2,4,6,   //I
@@ -27,9 +28,17 @@ bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow &window, float initialX
                  0,1,2,3     // carré
                     };
 
-    for(int i = 0; i < 28; i++) PatterneApp[i] = PatterneA[i];
+    for (int i = 0; i < 28; i++){
+        PatterneApp[i] = PatterneA[i];
+    }
+
     for(int i = 0; i <28;  i++) Patterne[i] = PatterneApp[i];
-    for(int i = 0; i <9;  i++)for(int j = 0; j<24; j++) map[i][j]= 0;
+
+    for(int i = 0; i <9;  i++){
+        for(int j = 0; j<24; j++){    // Mise en place de la map
+            map[i][j]= 0;
+        }
+    }
 }
 
 bloc::~bloc(){
@@ -37,19 +46,18 @@ bloc::~bloc(){
 }
 
 void bloc::DefinitionDeStruct(int Plage, int Pattern, int i, int j){
-    switch (Plage){
-        case 0:
-            PosTot.X1 = i; PosTot.Y1 = j;
-            break;
-        case 1:
-            PosTot.X2 = i; PosTot.Y2 = j;
-            break;
-        case 2:
-            PosTot.X3 = i; PosTot.Y3 = j;
-            break;
-        case 3:
-            PosTot.X4 = i; PosTot.Y4 = j;
-            break;
+     if(Plage == 0){
+        PosTot.X1 = i;
+        PosTot.Y1 = j;
+    }else if(Plage == 1){
+        PosTot.X2 = i;
+        PosTot.Y2 = j;
+    }else if(Plage == 2){
+        PosTot.X3 = i;
+        PosTot.Y3 = j;
+    }else if(Plage == 3){
+        PosTot.X4 = i;
+        PosTot.Y4 = j;
     }
 }
 
@@ -58,14 +66,15 @@ void bloc::DefinitionDeStruct(int Plage, int Pattern, int i, int j){
 void bloc::assembly(){
 
     const int KpatternInit = NbBloc*4;
-    int Kpattern = KpatternInit, tab1D[8], k=0, w=0;;
+    int Kpattern = KpatternInit;
+    int tab1D[8];
     for(int i=0;i<8;i++){
         if(Patterne[Kpattern]==i){
             tab1D[i]= CouleurAlea; 
             Kpattern++;
         }else tab1D[i]=0; 
     }
-    
+    int k=0, w=0;
     for(int i=0;i<4;i++)for(int j=0;j<2;j++){
         if(tab1D[k] >= 1){
             DefinitionDeStruct(w,KpatternInit,j,i);
@@ -77,8 +86,10 @@ void bloc::assembly(){
 
 void bloc::next(){
 
+   
     const int KpatternInit = NbBlocSuivant*4;
-    int Kpattern = KpatternInit, k=0, w=0, tab1D[8],tab2D[4][2];
+    int Kpattern = KpatternInit, k=0, w=0;
+    int tab1D[8],tab2D[4][2];
     for(int i=0;i<8;i++){
         if(Patterne[Kpattern]==i){
             tab1D[i]= CouleurAleaSuivant; 
@@ -87,6 +98,7 @@ void bloc::next(){
     }     
 
     for(int i=0;i<4;i++)for(int j=0;j<2;j++) tab2D[i][j]=tab1D[k++];
+
     for(int i=0;i<4;i++)for(int j=0;j<2;j++){        
         if(tab2D[i][j] >= 1){
             Tiles.setTextureRect(sf::IntRect(18*CouleurAleaSuivant,0,18,18));
@@ -99,6 +111,8 @@ void bloc::next(){
 
 
 bool bloc::checkLine(){
+
+    //std::cout << "Checklined : \n";
     for(int i = 0; i<24; i++){
         int compteur = 0;
         for(int j = 0; j<9; j++){
@@ -110,6 +124,7 @@ bool bloc::checkLine(){
             }
         }
     }      
+
     return false;
 }
 
@@ -128,14 +143,18 @@ void bloc::drawASprite(sf::Sprite &Tile){
 }
 
 void bloc::DessinerLeTableau(){
-    for(int i = 0; i<9; i++){for(int j = 0; j<24; j++){
+    for(int i = 0; i<9; i++){ 
+        for(int j = 0; j<24; j++){
             if (map[i][j] >= 1) {
+
                 int Couleur = map[i][j];
+
                 Tiles.setTextureRect(sf::IntRect(18*Couleur,0,18,18));
                 Tiles.setPosition(sf::Vector2f(TabX+18*i, TabY+18*j));
                 DrawTiles();
             }
-    }}
+        }
+    }
     
 }
 
@@ -224,7 +243,8 @@ void bloc::InitialiserPOS(){
 }
 
 void bloc::RegenererBloc(){
-    NbBloc = NbBlocSuivant; CouleurAlea = CouleurAleaSuivant;
+    NbBloc = NbBlocSuivant;
+    CouleurAlea = CouleurAleaSuivant;
     CouleurAleatoire();
     BlocAleatoire();
     assembly();
@@ -262,15 +282,14 @@ void bloc::ResetBloc(){
             break;
         }
     }
-    rotation =0;
 
+    rotation =0;
     InitialiserPOS();
     RegenererBloc();
 }
 
 void bloc::VoirLeTableau(){
     std::cout <<"\n\n";
-    std::cout << "Le Tableau Final : \r";
     for(int i =0; i <24 ; i++){
         for(int j=0 ; j<9; j++){
             std::cout << map[j][i];
@@ -295,6 +314,7 @@ void bloc::SuppLine(){
     LigneDetruite++;
     int LigneComplete = 0;
     int mapAnnexe[9][24];
+
     for (int i = 0; i < 24; i++){
         for (int j = 0; j < 9; j++) mapAnnexe[j][i] = map[j][i];  
     }
@@ -321,19 +341,23 @@ void bloc::SuppLine(){
 void bloc::ScoreAdd(std::string TypePts, int Nbr){
     if(TypePts == "Ligne"){
         int PtsBase = Nbr *100;
+        
         int ScoreTmp = PtsBase + (100*(Nbr-1));
         score += ScoreTmp;
     }
+
     else if(TypePts == "DescenteRapide"){
+        
         score += (Niveau+1)*1;
     }
+
     else if(TypePts == "DescenteNow"){
         score += (Niveau+1)*2;
     }
 }
 
 void bloc::ChangementNiveau(){
-    if((Niveau+1)*3== LigneDetruite) Niveau++;
+    if((Niveau+1)*5 == LigneDetruite) Niveau++;
 }
 
 void bloc::RotationBloc(){
@@ -389,6 +413,8 @@ void bloc::RotationBloc(){
             break;
     }
 
+
+
     //Initialiser le tableau Pour rotate
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
@@ -398,7 +424,7 @@ void bloc::RotationBloc(){
 
     //On initialise tab16case avec map
 
-    switch (NbBloc){
+     switch (NbBloc){
         case 0:
             switch (rotation){
                 case 0:
@@ -421,10 +447,13 @@ void bloc::RotationBloc(){
             break;
     }
 
+
     //Rotation
 
     for(int i=0;i<4;i++)for(int j=0;j<4;j++) tab16CasesR[j][3-i]=tab16Cases[i][j];
     for(int i=0;i<4;i++)for(int j=0;j<4;j++) tab16Cases[j][i]=tab16CasesR[j][i];
+    
+
 
     while(CheckLineLineRotateH(tab16Cases)) SuppLineRotateH(tab16Cases);
     while(CheckLineLineRotateV(tab16Cases)) SuppLineRotateV(tab16Cases);
@@ -443,8 +472,10 @@ void bloc::RotationBloc(){
             break;
     }
 
+
     // Tab dans map
 
+    
     switch (NbBloc){
     case 0:
         for (int i = YPlusPtit; i < YPlusPtit+4; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++) map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
@@ -456,12 +487,10 @@ void bloc::RotationBloc(){
         for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+3; j++) map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
         break;
     }
-
     int k = 0;
 
     //Initiation des poses en fonction du bloc (a optimiser si pas flemme) switch case:
 
-//NBBLOC
     switch (NbBloc){
         case 0:
             switch (rotation){
@@ -558,15 +587,14 @@ void bloc::RotationBloc(){
                     break;
                 }
             break;
-            
-
     }
-
     rotation++;
     rotation %= 2;
 }
 
 bool bloc::CheckLineLineRotateH(int (&Tab)[4][4]){
+
+
     int Count = 0; bool Finito = true;
 
     for(int i=0;i<4;i++){
@@ -579,9 +607,10 @@ bool bloc::CheckLineLineRotateH(int (&Tab)[4][4]){
             if(Tab[j][i] == 0) Count++;
             else break;
         }         
-        if(Finito) break;
         if(Count == 4) return true;
+        if (Finito) break;
     }
+    
     return false;
 }
 
@@ -600,8 +629,10 @@ bool bloc::CheckLineLineRotateV(int (&Tab)[4][4]){
             else if(Tab[i][j] == 0) Count++;
             else break;
         }
-        if(Finito) break;
-        if(Count == 4) return true;
+        if (Finito) break;
+        if(Count == 4){
+            return true;
+        }
     }
     return false;
 }
@@ -609,22 +640,47 @@ bool bloc::CheckLineLineRotateV(int (&Tab)[4][4]){
 void bloc::SuppLineRotateH(int Tab[4][4]){
 
     int Tab2[4][4];
-    for(int i=0;i<4;i++) for(int j=0;j<4;j++) Tab2[i][j] = Tab[i][j];
-    for(int i=0;i<4;i++)for(int j=1;j<4;j++){ 
-        Tab[i][j] = 0; 
-        Tab[i][j-1] = Tab2[i][j]; 
-    } 
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){ 
+            Tab2[i][j] = Tab[i][j];
+        }
+    }
+
+    for(int i=0;i<4;i++){
+        for(int j=1;j<4;j++){ 
+            Tab[i][j] = 0; 
+        } 
+    }
+
+
+    for(int i=0;i<4;i++){
+        for(int j=1;j<4;j++){ 
+            Tab[i][j-1] = Tab2[i][j]; 
+        } 
+    }
+
 }
 
 void bloc::SuppLineRotateV(int Tab[4][4]) {
 
     int Tab2[4][4];    
-    for(int i=0;i<4;i++)for(int j=0;j<4;j++) Tab2[i][j] = Tab[i][j];
-    for(int i=0;i<4;i++)for(int j=1;j<4;j++){ 
-        Tab[i][j] = 0;
-        Tab[i-1][j] = Tab2[i][j];
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){ 
+            Tab2[i][j] = Tab[i][j];
+        }
+    }
+    
+    for(int i=0;i<4;i++){
+        for(int j=1;j<4;j++){ 
+            Tab[i][j] = 0; 
+        } 
     }
 
+    for(int i=i;i<4;i++){
+        for(int j=0;j<4;j++){ 
+            Tab[i-1][j] = Tab2[i][j]; 
+        } 
+    }
 
 }
 
@@ -636,4 +692,69 @@ std::string bloc::Score(){
 std::string bloc::AfficherNiveau(){
     std::string msg = "Niveau : " + std::to_string(Niveau);
     return msg;
+}
+
+void bloc::ChangerBloc(){
+
+    if(PosTot.Y1 >= 5) return;
+
+    switch (BlocSaved){
+        case 8:
+            BlocSaved = NbBloc;
+            NbBloc = NbBlocSuivant;
+
+            CouleurSaved = CouleurAlea;
+            CouleurAlea = CouleurAleaSuivant;
+
+            RemplacerBlocSave(); 
+            break;
+        
+        default:
+            int BlocTmp = NbBloc;
+            NbBloc = BlocSaved;
+            BlocSaved = BlocTmp;
+
+            int ColorTmp = CouleurAlea;
+            CouleurAlea = CouleurSaved;
+            CouleurSaved = ColorTmp;
+
+            RemplacerBlocSave();
+            break;
+    }
+}
+
+
+void bloc::RemplacerBlocSave(){
+    
+    map[PosTot.X1][PosTot.Y1] = 0;
+    map[PosTot.X2][PosTot.Y2] = 0;
+    map[PosTot.X3][PosTot.Y3] = 0;
+    map[PosTot.X4][PosTot.Y4] = 0;
+
+    assembly();
+}
+
+void bloc::Saved(){
+
+    if(BlocSaved == 8) return;
+    const int KpatternInit = BlocSaved*4;
+    int Kpattern = KpatternInit, k=0, w=0;
+    int tab1D[8],tab2D[4][2];
+    for(int i=0;i<8;i++){
+        if(Patterne[Kpattern]==i){
+            tab1D[i]= CouleurAleaSuivant; 
+            Kpattern++;
+        }else tab1D[i]=0; 
+    }     
+
+    for(int i=0;i<4;i++)for(int j=0;j<2;j++) tab2D[i][j]=tab1D[k++];
+
+    for(int i=0;i<4;i++)for(int j=0;j<2;j++){        
+        if(tab2D[i][j] >= 1){
+            Tiles.setTextureRect(sf::IntRect(18*CouleurAleaSuivant,0,18,18));
+            Tiles.setPosition(sf::Vector2f((218+(j*18)),(136+(i*18))));
+            AddrWindow->draw(Tiles);
+        }
+    }
+
 }

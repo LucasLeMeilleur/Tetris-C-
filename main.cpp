@@ -171,8 +171,6 @@ int main() {
             CadreNextMaker(Wall);
             window.display();
 
-
-            MonblocCopy->VoirLeTableau();
             sf::sleep(sf::milliseconds(150));        
         }
         threadDeplacement.terminate();

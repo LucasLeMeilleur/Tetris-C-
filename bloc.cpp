@@ -75,7 +75,7 @@ void bloc::assembly(){
         }else tab1D[i]=0; 
     }
     int k=0, w=0;
-    for(int i=0;i<4;i++)for(int j=0;j<2;j++){
+    for(int i=0;i<4;i++)for(int j=3;j<5;j++){
         if(tab1D[k] >= 1){
             DefinitionDeStruct(w,KpatternInit,j,i);
             w++;
@@ -742,7 +742,7 @@ void bloc::Saved(){
     int tab1D[8],tab2D[4][2];
     for(int i=0;i<8;i++){
         if(Patterne[Kpattern]==i){
-            tab1D[i]= CouleurAleaSuivant; 
+            tab1D[i]= CouleurSaved; 
             Kpattern++;
         }else tab1D[i]=0; 
     }     
@@ -751,7 +751,7 @@ void bloc::Saved(){
 
     for(int i=0;i<4;i++)for(int j=0;j<2;j++){        
         if(tab2D[i][j] >= 1){
-            Tiles.setTextureRect(sf::IntRect(18*CouleurAleaSuivant,0,18,18));
+            Tiles.setTextureRect(sf::IntRect(18*CouleurSaved,0,18,18));
             Tiles.setPosition(sf::Vector2f((218+(j*18)),(136+(i*18))));
             AddrWindow->draw(Tiles);
         }

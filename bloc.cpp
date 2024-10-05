@@ -357,7 +357,10 @@ void bloc::ScoreAdd(std::string TypePts, int Nbr){
 }
 
 void bloc::ChangementNiveau(){
-    if((Niveau+1)*5 == LigneDetruite) Niveau++;
+    if((Niveau+1)*4 <= LigneDetruite){
+        Niveau++;
+        LigneDetruite = 0;
+    }
 }
 
 void bloc::RotationBloc(){

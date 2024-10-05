@@ -1,4 +1,5 @@
 #include "bloc.hpp"
+#include "menu.h"
 #include <SFML/Graphics.hpp>
 
 #include <iostream>
@@ -75,6 +76,11 @@ int main() {
     sf::Texture TextTruc;
     sf::Texture TextWall;
 
+    sf::RenderTexture renderTexture;
+    renderTexture.create(900, 540);
+    
+
+
     sf::Font font;
 
 
@@ -86,8 +92,6 @@ int main() {
     sf::Text textScore;
     sf::Text textNiveau;
     sf::Text textNextPiece;
-    sf::Text textBlocSaved;
-    SetText(textBlocSaved, font, 150, 70);
     SetText(textNextPiece, font, 582, 70);
     SetText(textScore, font, 582, 300);
     SetText(textNiveau, font, 582, 250);
@@ -108,27 +112,31 @@ int main() {
     }
 
 
+    menu Menu(window, font);
     window.clear();
     while(window.isOpen()){
         sf::Event event;
         bloc Monbloc(TextTruc, window, 360, 60);
+        
         MonblocCopy = &Monbloc;
         Monbloc.BlocAleatoire(); Monbloc.CouleurAleatoire();
         Monbloc.RegenererBloc();
-        bool ThreadLance = false;
-        bool TouchePresse = false;
+        bool ThreadLance = false, TouchePresse = false;
         while(1){
             if(MonblocCopy->Perdu()) break;
             if (ThreadLance == false){ 
                 threadDeplacement.launch();
                 ThreadLance = true;
             }            
+            
             while(window.pollEvent(event)) {
                 if (event.type == sf::Event::Closed) {
                     window.close();
                     break;
                 }
             }
+            
+            
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
                 window.close();
                 break;
@@ -154,22 +162,37 @@ int main() {
             }
             else TouchePresse = false;
 
+
+
+            renderTexture.clear();
             Monbloc.ChangementNiveau();
             textScore.setString(Monbloc.Score());
             textNiveau.setString(Monbloc.AfficherNiveau());
-            textBlocSaved.setString(std::to_string(Monbloc.AfficherBlocSaved()));
             window.clear();
             Monbloc.DessinerLeTableau();
-            Monbloc.next();
-            Monbloc.Saved();
-            window.draw(textNiveau);  
-            window.draw(textScore); 
-            window.draw(textNextPiece);
-            window.draw(textBlocSaved);
-
+            Monbloc.next(); Monbloc.Saved();
+            window.draw(textNiveau); window.draw(textScore); window.draw(textNextPiece); 
             WallMaker(Wall);
             CadreNextMaker(Wall);
             window.display();
+
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)){    
+
+                sf::Texture texture;
+                texture.create(900,540);
+                texture.update(window);         
+                threadDeplacement.terminate(); 
+                Menu.Flou(texture);
+                while (true){
+                    if(sf::Keyboard::isKeyPressed(sf::Keyboard::O)){
+                        threadDeplacement.launch();
+                        break;
+                    }
+                    sf::sleep(sf::milliseconds(100));
+                }                            
+            }
+
+
 
             sf::sleep(sf::milliseconds(150));        
         }

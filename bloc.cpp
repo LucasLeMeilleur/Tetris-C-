@@ -277,7 +277,7 @@ void bloc::ResetBloc(){
     const int* Y[] = {&PosTot.Y1, &PosTot.Y2, &PosTot.Y3, &PosTot.Y4};
     
     for(int i = 0; i < 4 ; i++){
-        if(*Y[i] <= 4 ){
+        if(*Y[i] <= 3 ){
             VPerdu = true;
             break;
         }
@@ -371,9 +371,13 @@ void bloc::RotationBloc(){
     if((NbBloc == 0) && (PosTot.X1 >= 6)) return;
     if((NbBloc == 0) && (rotation == 1) && (PosTot.Y4 >= 19)) return;
 
+
+    std::cout << "1eres les condition passé ";
+
     if((NbBloc !=1 ) && (PosTot.X1 >= 7))return;
     if((NbBloc !=1 ) && (rotation == 1) && (PosTot.Y4 >= 20))return;
     
+    std::cout << "Tte les condition passé ";
 
     int tab16Cases[4][4], tab16CasesR[4][4], tab2D[2][4];
     const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
@@ -699,6 +703,7 @@ std::string bloc::AfficherNiveau(){
 
 void bloc::ChangerBloc(){
 
+    rotation = 0;
     if(PosTot.Y1 >= 5) return;
 
     switch (BlocSaved){

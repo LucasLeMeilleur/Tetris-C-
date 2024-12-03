@@ -1,6 +1,8 @@
-#include "bloc.hpp"
+#include "bloc.h"
 #include "menu.h"
+#define SFML_STATIC
 #include <SFML/Graphics.hpp>
+
 
 #include <iostream>
 
@@ -12,7 +14,7 @@
 bloc* MonblocCopy;
 
 void Deplacement(){
-    while(!MonblocCopy->Perdu()){
+    do{
         MonblocCopy->DeplacementBas();     
         sf::sleep(sf::milliseconds(MonblocCopy->VitesseBloc()));   
         if(MonblocCopy->DetectionBlocEnBas() || MonblocCopy->DetectionBlocEmpile()){   
@@ -23,9 +25,10 @@ void Deplacement(){
             }
             if(LigneTmp >= 1) MonblocCopy->ScoreAdd("Ligne", LigneTmp);
             MonblocCopy->ResetBloc();
-        }           
-    }
-    
+        }   
+         
+    }while(!MonblocCopy->Perdu());
+   
 }
 
 void SetText(sf::Text &Text, sf::Font &font, int posX, int posY){
@@ -78,11 +81,7 @@ int main() {
 
     sf::RenderTexture renderTexture;
     renderTexture.create(900, 540);
-    
-
-
     sf::Font font;
-
 
     font.loadFromFile("arial.ttf");
     if (!font.loadFromFile("arial.ttf")) {
@@ -122,12 +121,17 @@ int main() {
         Monbloc.BlocAleatoire(); Monbloc.CouleurAleatoire();
         Monbloc.RegenererBloc();
         bool ThreadLance = false, TouchePresse = false;
-        while(1){
+
+        while(true){            
+
             if(MonblocCopy->Perdu()) break;
+
             if (ThreadLance == false){ 
                 threadDeplacement.launch();
                 ThreadLance = true;
             }            
+
+        
             
             while(window.pollEvent(event)) {
                 if (event.type == sf::Event::Closed) {
@@ -154,7 +158,6 @@ int main() {
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
                 if(!TouchePresse){
-                    Monbloc.VoirLeTableau();
                     Monbloc.RotationBloc();
                     TouchePresse=true;
                 }
@@ -200,7 +203,8 @@ int main() {
         Monbloc.VoirLeTableau();
         std::cout << "\n\r---------- PERDU ! ----------";
         std::cout << "\n\n\rVoici ton score : " << Monbloc.Score() << "\n";
-        break;
+        std::cout << "Appuyez sur entree pour quitter...";
+        std::cin.ignore();
     }    
     return 0;
 }

@@ -1,4 +1,7 @@
-#include "bloc.hpp"
+#include "bloc.h"
+#ifndef SFML_STATIC
+#define SFML_STATIC
+#endif
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <cstdlib>
@@ -17,6 +20,7 @@ bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow &window, float initialX
     Tiles.setPosition(initialX, initialY);
     TabX = initialX;
     TabY = initialY;
+    VPerdu = false;
 
     int PatterneA[28] = { 
                  0,2,4,6,   //I
@@ -88,7 +92,7 @@ void bloc::next(){
 
    
     const int KpatternInit = NbBlocSuivant*4;
-    int Kpattern = KpatternInit, k=0, w=0;
+    int Kpattern = KpatternInit, k=0;
     int tab1D[8],tab2D[4][2];
     for(int i=0;i<8;i++){
         if(Patterne[Kpattern]==i){
@@ -112,7 +116,7 @@ void bloc::next(){
 
 bool bloc::checkLine(){
 
-    //std::cout << "Checklined : \n";
+
     for(int i = 0; i<24; i++){
         int compteur = 0;
         for(int j = 0; j<9; j++){
@@ -273,7 +277,7 @@ bool bloc::DetectionBlocEmpile(){
 }
 
 void bloc::ResetBloc(){
-    const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
+    //const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
     const int* Y[] = {&PosTot.Y1, &PosTot.Y2, &PosTot.Y3, &PosTot.Y4};
     
     for(int i = 0; i < 4 ; i++){
@@ -310,7 +314,6 @@ bool bloc::Perdu(){
 
 void bloc::SuppLine(){
 
-    std::cout << LigneDetruite;
     LigneDetruite++;
     int LigneComplete = 0;
     int mapAnnexe[9][24];
@@ -372,14 +375,12 @@ void bloc::RotationBloc(){
     if((NbBloc == 0) && (rotation == 1) && (PosTot.Y4 >= 19)) return;
 
 
-    std::cout << "1eres les condition passé ";
 
     if((NbBloc !=1 ) && (PosTot.X1 >= 7))return;
     if((NbBloc !=1 ) && (rotation == 1) && (PosTot.Y4 >= 20))return;
     
-    std::cout << "Tte les condition passé ";
 
-    int tab16Cases[4][4], tab16CasesR[4][4], tab2D[2][4];
+    int tab16Cases[4][4], tab16CasesR[4][4];
     const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
     const int* Y[] = {&PosTot.Y1, &PosTot.Y2, &PosTot.Y3, &PosTot.Y4};
     int XPlusPtit= *X[0], YPlusPtit= *Y[0];
@@ -683,7 +684,7 @@ void bloc::SuppLineRotateV(int Tab[4][4]) {
         } 
     }
 
-    for(int i=i;i<4;i++){
+    for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){ 
             Tab[i-1][j] = Tab2[i][j]; 
         } 
@@ -746,7 +747,7 @@ void bloc::Saved(){
 
     if(BlocSaved == 8) return;
     const int KpatternInit = BlocSaved*4;
-    int Kpattern = KpatternInit, k=0, w=0;
+    int Kpattern = KpatternInit, k=0;
     int tab1D[8],tab2D[4][2];
     for(int i=0;i<8;i++){
         if(Patterne[Kpattern]==i){

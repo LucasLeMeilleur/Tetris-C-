@@ -1,5 +1,5 @@
 #include "menu.h"
-
+#include <iostream>
 
 
 const char* blur_frag = R"(
@@ -50,6 +50,8 @@ menu::menu(sf::RenderWindow& window, sf::Font &font1){
     
 }
 
+menu::~menu(){}
+
 
 void menu::Flou(sf::Texture& texture){
 
@@ -69,4 +71,112 @@ void menu::Flou(sf::Texture& texture){
 
     AddrWindow->draw(Pause); 
     AddrWindow->display();
+}
+
+int menu::MenuJeu(){
+
+    sf::Event event;
+    sf::Text Pause, Quitter;
+    sf::Texture TextLogo, TextFond;
+
+    if (!TextLogo.loadFromFile("asset/TetrisLogo.png")){
+        return EXIT_FAILURE;
+    }   
+    if (!TextFond.loadFromFile("asset/Fond.png")){
+        return EXIT_FAILURE;
+    }   
+
+    sf::Sprite Logo(TextLogo);
+    sf::Sprite Fond(TextFond), Fond2(TextFond);
+
+
+    Pause.setFont(*font);
+    Pause.setString("Jouer !");
+    Pause.setCharacterSize(30);
+    Pause.setFillColor(sf::Color::White);
+    sf::FloatRect PausetextBounds = Pause.getLocalBounds(); 
+    sf::Vector2u windowSize = AddrWindow->getSize(); 
+
+    Pause.setOrigin(PausetextBounds.width / 2, PausetextBounds.height / 2); 
+    Pause.setPosition(windowSize.x / 2, windowSize.y / 2); 
+
+
+
+
+    Quitter.setFont(*font);
+    Quitter.setString("Quitter");
+    Quitter.setCharacterSize(30);
+    Quitter.setFillColor(sf::Color::White);
+    sf::FloatRect QuittertextBounds = Quitter.getLocalBounds();
+    Quitter.setOrigin(QuittertextBounds.width / 2, QuittertextBounds.height / 2); 
+    Quitter.setPosition(windowSize.x / 2, (windowSize.y / 2)+100); 
+
+
+    sf::FloatRect LogoBound = Logo.getLocalBounds();
+    Logo.setOrigin(LogoBound.width/2, LogoBound.height/2);
+    Logo.setPosition(windowSize.x/2, 100);
+
+    sf::Clock gameClock;
+
+    Fond.setPosition(0, 0);
+    Fond2.setPosition(TextFond.getSize().x, 0);
+
+    float scrollSpeed = 25.0f;
+
+    while (true && AddrWindow->isOpen()) {
+        while (AddrWindow->pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                AddrWindow->close();
+                return 0; 
+            }
+
+
+            
+
+
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(*AddrWindow);
+
+                sf::FloatRect PausetextGBounds = Pause.getGlobalBounds(); 
+                sf::FloatRect QuittertextGBounds = Quitter.getGlobalBounds();
+
+                if (PausetextGBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))){
+                    std::cout << "Test";
+                    return 1; 
+                }
+                if (QuittertextGBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    return 0;
+                }
+            }
+        }
+
+        float deltaTime = gameClock.restart().asSeconds();
+        float move = scrollSpeed * deltaTime;
+
+        Fond.move(-move, 0);
+        Fond2.move(-move, 0);
+
+        if (Fond.getPosition().x + TextFond.getSize().x <= 0)
+            Fond.setPosition(Fond2.getPosition().x + TextFond.getSize().x, 0);
+        if (Fond2.getPosition().x + TextFond.getSize().x <= 0)
+            Fond2.setPosition(Fond.getPosition().x + TextFond.getSize().x, 0);
+
+
+
+
+        AddrWindow->clear();
+        AddrWindow->draw(Fond);
+        AddrWindow->draw(Fond2);
+        AddrWindow->draw(Pause);
+        AddrWindow->draw(Quitter);
+        AddrWindow->draw(Logo);
+        AddrWindow->display();
+    }
+    return 0; 
+}
+
+
+
+int menu::MenuPerdu(){
+    return 0;
 }

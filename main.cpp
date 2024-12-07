@@ -137,108 +137,109 @@ int main() {
         Monbloc.BlocAleatoire(); Monbloc.CouleurAleatoire(); Monbloc.RegenererBloc();
         bool ThreadLance = false, TouchePresse = false;
 
-        while(true){            
-            if(MonblocCopy->Perdu()) break;
-            
-            if (ThreadLance == false){ 
-                threadDeplacement.launch();
-                ThreadLance = true;
-            }                   
-            
-            while(window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed) {
-                    window.close();
-                    break;
-                }
-            }
-            
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-                window.close();
-                break;
-            }                
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) Monbloc.mouvement("right");
-            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) Monbloc.mouvement("left");
-            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
-                if(!Monbloc.DetectionBlocEmpile()){
-                    Monbloc.mouvement("down");
-                    if(Monbloc.GetY() != ValeurY)  Monbloc.ScoreAdd("DescenteRapide", 0);
-                }
-            }
-            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
-                    Monbloc.ChangerBloc();
-            }
-            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
-                if(!TouchePresse){
-                    Monbloc.RotationBloc();
-                    TouchePresse=true;
-                }
+        int MenuOptions = Menu.MenuJeu();
+
+        if(MenuOptions == 1){
+            while(true){            
+                if(MonblocCopy->Perdu()) break;
                 
-            }
-            else TouchePresse = false;
-
-
-            renderTexture.clear();
-            Monbloc.ChangementNiveau();
-            textScore.setString(Monbloc.AfficherScore());
-            textNiveau.setString(Monbloc.AfficherNiveau());
-            textLignes.setString(Monbloc.AfficherLigneDetruite());
-            window.clear(sf::Color(15, 15, 15));
-            Monbloc.DessinerLeTableau();
-            Monbloc.next(); Monbloc.Saved();
-            window.draw(textNiveau); window.draw(textLignes); window.draw(textScore); window.draw(textNextPiece); window.draw(SpCmd); window.draw(SpStat);
-            WallMaker(Wall);
-            CadreNextMaker(Wall);
-            window.display();
-
-            sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-
-            // Afficher les coordonnées dans la console
-            std::cout << "Position de la souris: X = " << mousePosition.x
-                  << ", Y = " << mousePosition.y << "\r";
-
-
-            float centerXscore = (122 + 252) / 2.0f, centerYScore = 345;
-            sf::FloatRect textBoundsScore = textScore.getLocalBounds();
-            textScore.setOrigin(textBoundsScore.left + textBoundsScore.width / 2.0f, textBoundsScore.top + textBoundsScore.height / 2.0f);
-            textScore.setPosition(centerXscore, centerYScore);
-
-            float centerXlvl = (122 + 252) / 2.0f, centerYlvl = 275;
-            sf::FloatRect textBoundsLvl = textNiveau.getLocalBounds();
-            textNiveau.setOrigin(textBoundsLvl.left + textBoundsLvl.width / 2.0f, textBoundsLvl.top + textBoundsLvl.height / 2.0f);
-            textNiveau.setPosition(centerXlvl, centerYlvl);
-
-            float centerXLigne = (122 + 252) / 2.0f, centerYLigne = 415;
-            sf::FloatRect textBoundsLignes = textLignes.getLocalBounds();
-            textLignes.setOrigin(textBoundsLignes.left + textBoundsLignes.width / 2.0f, textBoundsLignes.top + textBoundsLignes.height / 2.0f);
-            textLignes.setPosition(centerXLigne, centerYLigne);
-
-
-
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)){   
-                sf::Texture texture;
-                texture.create(900,540);
-                texture.update(window);         
-                threadDeplacement.terminate(); 
-                Menu.Flou(texture);
-                while (true){
-                    if(sf::Keyboard::isKeyPressed(sf::Keyboard::O)){
-                        threadDeplacement.launch();
+                if (ThreadLance == false){ 
+                    threadDeplacement.launch();
+                    ThreadLance = true;
+                }                   
+                
+                while(window.pollEvent(event)) {
+                    if (event.type == sf::Event::Closed) {
+                        window.close();
                         break;
                     }
-                    sf::sleep(sf::milliseconds(100));
-                }                            
+                }
+                
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+                    window.close();
+                    break;
+                }                
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) Monbloc.mouvement("right");
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) Monbloc.mouvement("left");
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+                    if(!Monbloc.DetectionBlocEmpile()){
+                        Monbloc.mouvement("down");
+                        if(Monbloc.GetY() != ValeurY)  Monbloc.ScoreAdd("DescenteRapide", 0);
+                    }
+                }
+                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+                        Monbloc.ChangerBloc();
+                }
+                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    if(!TouchePresse){
+                        Monbloc.RotationBloc();
+                        TouchePresse=true;
+                    }
+                    
+                }
+                else TouchePresse = false;
+
+                renderTexture.clear();
+                Monbloc.ChangementNiveau();
+                textScore.setString(Monbloc.AfficherScore());
+                textNiveau.setString(Monbloc.AfficherNiveau());
+                textLignes.setString(Monbloc.AfficherLigneDetruite());
+                window.clear(sf::Color(15, 15, 15));
+                Monbloc.DessinerLeTableau();
+                Monbloc.next(); Monbloc.Saved();
+                window.draw(textNiveau); window.draw(textLignes); window.draw(textScore); window.draw(textNextPiece); window.draw(SpCmd); window.draw(SpStat);
+                WallMaker(Wall);
+                CadreNextMaker(Wall);
+                window.display();
+
+
+                float centerXscore = (122 + 252) / 2.0f, centerYScore = 345;
+                sf::FloatRect textBoundsScore = textScore.getLocalBounds();
+                textScore.setOrigin(textBoundsScore.left + textBoundsScore.width / 2.0f, textBoundsScore.top + textBoundsScore.height / 2.0f);
+                textScore.setPosition(centerXscore, centerYScore);
+
+                float centerXlvl = (122 + 252) / 2.0f, centerYlvl = 275;
+                sf::FloatRect textBoundsLvl = textNiveau.getLocalBounds();
+                textNiveau.setOrigin(textBoundsLvl.left + textBoundsLvl.width / 2.0f, textBoundsLvl.top + textBoundsLvl.height / 2.0f);
+                textNiveau.setPosition(centerXlvl, centerYlvl);
+
+                float centerXLigne = (122 + 252) / 2.0f, centerYLigne = 415;
+                sf::FloatRect textBoundsLignes = textLignes.getLocalBounds();
+                textLignes.setOrigin(textBoundsLignes.left + textBoundsLignes.width / 2.0f, textBoundsLignes.top + textBoundsLignes.height / 2.0f);
+                textLignes.setPosition(centerXLigne, centerYLigne);
+
+
+
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)){   
+                    sf::Texture texture;
+                    texture.create(900,540);
+                    texture.update(window);         
+                    threadDeplacement.terminate(); 
+                    Menu.Flou(texture);
+                    while (true){
+                        if(sf::Keyboard::isKeyPressed(sf::Keyboard::O)){
+                            threadDeplacement.launch();
+                            break;
+                        }
+                        sf::sleep(sf::milliseconds(100));
+                    }                            
+                }
+                sf::sleep(sf::milliseconds(150));    
+                ValeurY= Monbloc.GetY();     
             }
-            sf::sleep(sf::milliseconds(150));    
-            ValeurY= Monbloc.GetY();     
+            if(window.isOpen()) window.close();
+            threadDeplacement.terminate();
+            Monbloc.VoirLeTableau();
+            std::cout << "\n\r---------- PERDU ! ----------";
+            std::cout << "\n\n\rVoici ton score : " << Monbloc.AfficherScore() << "\n";
+            std::cout << "Appuyez sur entree pour quitter...";
+            Monbloc.~bloc();
+            std::cin.get();
+        }else if(MenuOptions == 0){
+            window.close();
+            Monbloc.~bloc();
+            MonblocCopy = nullptr;
         }
-        if(window.isOpen()) window.close();
-        threadDeplacement.terminate();
-        Monbloc.VoirLeTableau();
-        std::cout << "\n\r---------- PERDU ! ----------";
-        std::cout << "\n\n\rVoici ton score : " << Monbloc.AfficherScore() << "\n";
-        std::cout << "Appuyez sur entree pour quitter...";
-        Monbloc.~bloc();
-        std::cin.get();
     }    
     return 0;
 } 

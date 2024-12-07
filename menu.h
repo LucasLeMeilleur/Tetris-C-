@@ -8,6 +8,9 @@ class menu{
         sf::Font* font;
     public:
         menu(sf::RenderWindow& window, sf::Font& font1);
-        void Flou(sf::Texture& texture);    
+        ~menu();
+        void Flou(sf::Texture& texture);  
+        int MenuJeu();
+        int MenuPerdu();  
 };
 

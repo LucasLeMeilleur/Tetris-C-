@@ -1,3 +1,6 @@
 .vscode/
 .Makefile.swp
 asset/blur.frag
+*.o
+TetrisLinux
+TetrisWindows.exe

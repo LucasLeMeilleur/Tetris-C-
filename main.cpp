@@ -14,7 +14,7 @@ bloc* MonblocCopy;
 
 void Deplacement(){
     do{
-        MonblocCopy->DeplacementBas();     
+        MonblocCopy->mouvement("down");     
         sf::sleep(sf::milliseconds(MonblocCopy->VitesseBloc()));   
         if(MonblocCopy->DetectionBlocEnBas() || MonblocCopy->DetectionBlocEmpile()){   
             int LigneTmp =0;  
@@ -126,6 +126,7 @@ int main() {
         return EXIT_FAILURE;
     }   
 
+    int ValeurY=0;
 
     menu Menu(window, font);
     window.clear();
@@ -160,7 +161,7 @@ int main() {
             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
                 if(!Monbloc.DetectionBlocEmpile()){
                     Monbloc.mouvement("down");
-                    Monbloc.ScoreAdd("DescenteRapide", 0);
+                    if(Monbloc.GetY() != ValeurY)  Monbloc.ScoreAdd("DescenteRapide", 0);
                 }
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
@@ -178,7 +179,7 @@ int main() {
 
             renderTexture.clear();
             Monbloc.ChangementNiveau();
-            textScore.setString(Monbloc.Score());
+            textScore.setString(Monbloc.AfficherScore());
             textNiveau.setString(Monbloc.AfficherNiveau());
             textLignes.setString(Monbloc.AfficherLigneDetruite());
             window.clear(sf::Color(15, 15, 15));
@@ -227,13 +228,14 @@ int main() {
                     sf::sleep(sf::milliseconds(100));
                 }                            
             }
-            sf::sleep(sf::milliseconds(150));        
+            sf::sleep(sf::milliseconds(150));    
+            ValeurY= Monbloc.GetY();     
         }
         if(!window.isOpen()) window.close();
         threadDeplacement.terminate();
         Monbloc.VoirLeTableau();
         std::cout << "\n\r---------- PERDU ! ----------";
-        std::cout << "\n\n\rVoici ton score : " << Monbloc.Score() << "\n";
+        std::cout << "\n\n\rVoici ton score : " << Monbloc.AfficherScore() << "\n";
         std::cout << "Appuyez sur entree pour quitter...";
         Monbloc.~bloc();
         std::cin.get();

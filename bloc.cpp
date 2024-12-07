@@ -2,6 +2,7 @@
 #ifndef SFML_STATIC
 #define SFML_STATIC
 #endif
+
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <cstdlib>
@@ -30,15 +31,12 @@ bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow &window, float initialX
                  0,2,3,5,    // Z
                  1,2,3,4,     // Z reversed             
                  0,1,2,3     // carré
-                    };
+    };
 
-    for (int i = 0; i < 28; i++){
-        PatterneApp[i] = PatterneA[i];
-    }
-
+    for(int i = 0; i < 28; i++) PatterneApp[i] = PatterneA[i];
     for(int i = 0; i <28;  i++) Patterne[i] = PatterneApp[i];
 
-//Mise en place de la map colonne ligne  (à inverser LOL)
+    //Mise en place de la map colonne ligne  (à inverser LOL)
     for(int i = 0; i <10;  i++) for(int j = 0; j<20; j++) map[i][j]= 0;
 }
 
@@ -93,9 +91,7 @@ void bloc::assembly(){
     }
 }
 
-void bloc::next(){
-
-   
+void bloc::next(){   
     const int KpatternInit = NbBlocSuivant*4;
     int Kpattern = KpatternInit, k=0;
     int tab1D[8],tab2D[4][2];
@@ -140,6 +136,7 @@ void bloc::mouvement(std::string NomMouv){
     if(NomMouv == "left") DeplacementGauche();
     if(NomMouv == "right") DeplacementDroite();
     if(NomMouv == "down") DeplacementBas();
+    
 }
 
 void bloc::DrawTiles(){
@@ -423,14 +420,8 @@ void bloc::RotationBloc(){
             break;
     }
 
-
-
     //Initialiser le tableau Pour rotate
-    for(int i = 0; i < 4; i++){
-        for(int j = 0; j < 4; j++){
-            tab16Cases[j][i] = 0;
-        }
-    }
+    for(int i = 0; i < 4; i++) for(int j = 0; j < 4; j++) tab16Cases[j][i] = 0;
 
     //On initialise tab16case avec map
 
@@ -668,13 +659,6 @@ void bloc::SuppLineRotateV(int Tab[4][4]) {
     for(int i=0;i<4;i++) for(int j=0;j<4;j++) Tab[i-1][j] = Tab2[i][j]; 
 }
 
-std::string bloc::Score(){
-    return std::to_string(score);
-}
-
-std::string bloc::AfficherNiveau(){
-    return std::to_string(Niveau);
-}
 
 void bloc::ChangerBloc(){
 
@@ -737,5 +721,9 @@ void bloc::Saved(){
             AddrWindow->draw(Tiles);
         }
     }
+}
 
+
+int bloc::GetY(){
+    return PosTot.Y1;
 }

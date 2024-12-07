@@ -16,6 +16,14 @@ class bloc{
         LesPos PosTot;
         bool VPerdu= false;
 
+        bool CheckLineLineRotateH(int (&Tab)[4][4]);
+        bool CheckLineLineRotateV(int (&Tab)[4][4]);
+        void SuppLineRotateH(int Tab[4][4]);
+        void SuppLineRotateV(int Tab[4][4]);
+        void DeplacementGauche();
+        void DeplacementDroite();
+        void DeplacementBas();
+
 
     public:
         bloc(const sf::Texture& Textruc ,sf::RenderWindow &window, float initialX, float initialY);
@@ -23,43 +31,42 @@ class bloc{
         void assembly();
         void next();
         void mouvement(std::string NomMouv);
-        bool checkLine();
         void SuppLine();
-        std::string Score();
-        std::string AfficherNiveau();
         void ScoreAdd(std::string TypePts, int Nbr);
         void DrawTiles();
         void drawASprite(sf::Sprite &Tile);
         void DessinerLeTableau();
-        inline sf::Vector2f RevoyerPosition() {return Tiles.getPosition(); };
         void Ajouter(int X, int Y,int Nbr);
-        void DeplacementGauche();
-        void DeplacementDroite();
-        void DeplacementBas();
         void InitialiserPOS();
         void RegenererBloc();
         void CouleurAleatoire();
         void BlocAleatoire();
-        bool DetectionBlocEnBas();
         void ResetBloc();
         void VoirLeTableau();
         void ViderTableau();
         void DefinitionDeStruct(int Plage, int Pattern, int i, int j);
-        bool Perdu();
-        inline int VitesseBloc(){ return ((40*100)-(2*Niveau*100))/6;};
         void ChangementNiveau();
-        inline void Effacer(){ AddrWindow->clear();};
-        inline void Dessiner(){ AddrWindow->display();};
-        bool DetectionBlocEmpile();
         void RotationBloc();
-        bool CheckLineLineRotateH(int (&Tab)[4][4]);
-        bool CheckLineLineRotateV(int (&Tab)[4][4]);
-        void SuppLineRotateH(int Tab[4][4]);
-        void SuppLineRotateV(int Tab[4][4]);
-        inline int AfficherBlocSuivant(){ return NbBlocSuivant; };
-        inline int AfficherBlocSaved(){ return BlocSaved;};
-        inline std::string AfficherLigneDetruite(){ return std::to_string(LigneDetruiteTot);};
         void ChangerBloc();
         void RemplacerBlocSave();
         void Saved();
+
+        int GetY();
+
+
+        bool checkLine();
+        bool DetectionBlocEnBas();
+        bool Perdu();
+        bool DetectionBlocEmpile();
+
+
+        inline void Effacer(){ AddrWindow->clear();};
+        inline void Dessiner(){ AddrWindow->display();};
+        inline int AfficherBlocSuivant(){ return NbBlocSuivant; };
+        inline int AfficherBlocSaved(){ return BlocSaved;};
+        inline int VitesseBloc(){ return ((40*100)-(2*Niveau*100))/6;};
+        inline std::string AfficherLigneDetruite(){ return std::to_string(LigneDetruiteTot);};
+        inline std::string AfficherNiveau(){return std::to_string(Niveau);};
+        inline std::string AfficherScore(){return std::to_string(score);};
+        inline sf::Vector2f RevoyerPosition() {return Tiles.getPosition(); };
 };

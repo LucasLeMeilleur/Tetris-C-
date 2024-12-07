@@ -11,7 +11,7 @@
 #include <iostream>
 
 
-bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow &window, float initialX, float initialY): Tiles(TextTruc){
+    bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow &window, int initialX, int initialY): Tiles(TextTruc){
     std::srand(std::time(0));
     InitialiserPOS();
     CouleurAleatoire();

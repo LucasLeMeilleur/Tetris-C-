@@ -26,7 +26,7 @@ class bloc{
 
 
     public:
-        bloc(const sf::Texture& Textruc ,sf::RenderWindow &window, float initialX, float initialY);
+        bloc(const sf::Texture& Textruc ,sf::RenderWindow &window, int initialX, int initialY);
         ~bloc();
         void assembly();
         void next();

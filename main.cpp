@@ -231,7 +231,7 @@ int main() {
             sf::sleep(sf::milliseconds(150));    
             ValeurY= Monbloc.GetY();     
         }
-        if(!window.isOpen()) window.close();
+        if(window.isOpen()) window.close();
         threadDeplacement.terminate();
         Monbloc.VoirLeTableau();
         std::cout << "\n\r---------- PERDU ! ----------";

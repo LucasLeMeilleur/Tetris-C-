@@ -8,8 +8,8 @@ class bloc{
         sf::Sprite Tiles;
         sf::Vector2f position;
 
-        int score =0, Niveau=0, LigneDetruite=0, Vitesse=0,rotation=0, BlocSaved = 8, CouleurSaved;
-        int Patterne[28], map[9][24], PatterneApp[28], TabX, TabY, Rotation, CouleurAlea, CouleurAleaSuivant, LigneComplete, NbBloc, NbBlocSuivant;
+        int score =0, Niveau=0, LigneDetruite=0, LigneDetruiteTot=0, Vitesse=0,rotation=0, BlocSaved = 8, CouleurSaved;
+        int Patterne[28], map[10][20], PatterneApp[28], TabX, TabY, Rotation, CouleurAlea, CouleurAleaSuivant, LigneComplete, NbBloc, NbBlocSuivant;
         struct LesPos{
             int X1,X2,X3,X4,Y1,Y2,Y3,Y4;
         };
@@ -58,6 +58,7 @@ class bloc{
         void SuppLineRotateV(int Tab[4][4]);
         inline int AfficherBlocSuivant(){ return NbBlocSuivant; };
         inline int AfficherBlocSaved(){ return BlocSaved;};
+        inline std::string AfficherLigneDetruite(){ return std::to_string(LigneDetruiteTot);};
         void ChangerBloc();
         void RemplacerBlocSave();
         void Saved();

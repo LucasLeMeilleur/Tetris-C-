@@ -1,15 +1,15 @@
 all: clean main
 
-main.o: main.cpp
+1.o: main.cpp
 	g++ -c main.cpp
 
-bloc.o: bloc.cpp
+2.o: bloc.cpp
 	g++ -c bloc.cpp
 
-menu.o: menu.cpp
+3.o: menu.cpp
 	g++ -c menu.cpp
 
-main: main.o bloc.o menu.o
+main: 1.o 2.o 3.o
 	g++ -o TetrisLinux main.o bloc.o menu.o -lsfml-graphics -lsfml-window -lsfml-system -lGL -lpthread -lfreetype -ljpeg
 
 clean:

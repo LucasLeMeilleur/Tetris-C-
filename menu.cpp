@@ -119,7 +119,7 @@ int menu::MenuJeu(){
     sf::Clock gameClock;
 
     Fond.setPosition(0, 0);
-    Fond2.setPosition(TextFond.getSize().x, 0);
+    Fond2.setPosition(0, TextFond.getSize().y);
 
     float scrollSpeed = 25.0f;
 
@@ -141,7 +141,6 @@ int menu::MenuJeu(){
                 sf::FloatRect QuittertextGBounds = Quitter.getGlobalBounds();
 
                 if (PausetextGBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))){
-                    std::cout << "Test";
                     return 1; 
                 }
                 if (QuittertextGBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
@@ -153,15 +152,15 @@ int menu::MenuJeu(){
         float deltaTime = gameClock.restart().asSeconds();
         float move = scrollSpeed * deltaTime;
 
-        Fond.move(-move, 0);
-        Fond2.move(-move, 0);
+        Fond.move(0, move);
+        Fond2.move(0, move);
 
-        if (Fond.getPosition().x + TextFond.getSize().x <= 0)
-            Fond.setPosition(Fond2.getPosition().x + TextFond.getSize().x, 0);
-        if (Fond2.getPosition().x + TextFond.getSize().x <= 0)
-            Fond2.setPosition(Fond.getPosition().x + TextFond.getSize().x, 0);
-
-
+        if (Fond.getPosition().y >= AddrWindow->getSize().y) {
+            Fond.setPosition(0, Fond2.getPosition().y - TextFond.getSize().y);
+        }
+        if (Fond2.getPosition().y >= AddrWindow->getSize().y) {
+            Fond2.setPosition(0, Fond.getPosition().y - TextFond.getSize().y);
+        }
 
 
         AddrWindow->clear();

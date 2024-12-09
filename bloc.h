@@ -50,6 +50,7 @@ class bloc{
         void ChangerBloc();
         void RemplacerBlocSave();
         void Saved();
+        void AjouterNiveau(int niveau);
 
         int GetY();
 

@@ -167,7 +167,7 @@ void bloc::Ajouter(int X, int Y, int  Nbr){
 
 void bloc::DeplacementBas(){
     if(
-        ( (PosTot.Y1 >= 0 && PosTot.Y1 < 19) && (PosTot.Y2 >= 0 && PosTot.Y2 < 19) && (PosTot.Y3 >= 0 && PosTot.Y3 < 19) && (PosTot.Y4 >= 0 && PosTot.Y4 < 19))
+        ((PosTot.Y1 >= 0 && PosTot.Y1 < 19) && (PosTot.Y2 >= 0 && PosTot.Y2 < 19) && (PosTot.Y3 >= 0 && PosTot.Y3 < 19) && (PosTot.Y4 >= 0 && PosTot.Y4 < 19))
         &&
         (      ((map[PosTot.X1][PosTot.Y1+1] == 0) || PosTot.Y1+1 == PosTot.Y2 || PosTot.Y1+1 == PosTot.Y3 || PosTot.Y1+1 == PosTot.Y4)
             && ((map[PosTot.X2][PosTot.Y2+1] == 0) || PosTot.Y2+1 == PosTot.Y3 || (PosTot.Y2+1 == PosTot.Y4 && PosTot.X2 == PosTot.X4)) 
@@ -370,12 +370,12 @@ void bloc::RotationBloc(){
     
 
     if(NbBloc == 6) return;
-    if((NbBloc == 0) && (PosTot.X1 >= 7)) return;
+    if((NbBloc == 0) && (PosTot.X1 >= 8)) return;
     if((NbBloc == 0) && (rotation == 1) && (PosTot.Y4 >= 16)) return;
 
 
 
-    if((NbBloc !=1 ) && (PosTot.X1 >= 8))return;
+    if((NbBloc !=1 ) && (PosTot.X1 >= 9))return;
     if((NbBloc !=1 ) && (rotation == 1) && (PosTot.Y4 >= 17))return;
     
 
@@ -726,4 +726,8 @@ void bloc::Saved(){
 
 int bloc::GetY(){
     return PosTot.Y1;
+}
+
+void bloc::AjouterNiveau(int niveau){
+    Niveau += niveau;
 }

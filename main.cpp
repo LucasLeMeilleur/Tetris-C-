@@ -159,6 +159,10 @@ int main() {
                     window.close();
                     break;
                 }                
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
+                    Monbloc.AjouterNiveau(1); 
+                }         
+
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) Monbloc.mouvement("right");
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) Monbloc.mouvement("left");
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){

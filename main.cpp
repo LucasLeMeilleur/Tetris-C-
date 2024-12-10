@@ -36,34 +36,7 @@ void SetText(sf::Text &Text, sf::Font &font, int posX, int posY){
     Text.setStyle(sf::Text::Bold);
 }
 
-void WallMaker(sf::Sprite &SpriteWall){
-    for (int i = 0; i < 12; i++){
-        SpriteWall.setPosition(342+18*i,420);
-        MonblocCopy->drawASprite(SpriteWall);
-    }
-    for (int i = 0; i < 20; i++){
-        SpriteWall.setPosition(540,60+18*i);
-        MonblocCopy->drawASprite(SpriteWall);
-        SpriteWall.setPosition(342,60+18*i);
-        MonblocCopy->drawASprite(SpriteWall);
-    }    
-}
 
-void CadreNextMaker(sf::Sprite &SpriteWall){
-    for (int i = 0; i < 6; i++){
-        SpriteWall.setPosition(582+18*i,102);
-        MonblocCopy->drawASprite(SpriteWall);
-        SpriteWall.setPosition(582+18*i,210);
-        MonblocCopy->drawASprite(SpriteWall);
-    }
-    for (int i = 0; i < 7; i++){
-        SpriteWall.setPosition(582,102+18*i);
-        MonblocCopy->drawASprite(SpriteWall);
-        SpriteWall.setPosition(672,102+18*i);
-        MonblocCopy->drawASprite(SpriteWall);
-    }    
-
-}
 
 void DefinirText(std::string text, sf::Text &Label, sf::Font &Font, int x, int y){
 
@@ -77,8 +50,9 @@ void DefinirText(std::string text, sf::Text &Label, sf::Font &Font, int x, int y
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(900,540), "Tetris game");
+    window.setFramerateLimit(60);  
     sf::Thread threadDeplacement(&Deplacement);
-    sf::Texture TextTruc, TextWall,CmdText,StatText;
+    sf::Texture TextTruc, TextWall,StatText, FondPrincipal;
 
     sf::RenderTexture renderTexture;
     renderTexture.create(900, 540);
@@ -91,23 +65,18 @@ int main() {
     sf::Text textScore,textNiveau,textNextPiece,textLignes;
 
 
-    if (!CmdText.loadFromFile("asset/Commandes.png")) { 
-        std::cerr << "Erreur : Impossible de charger l'image.\n";
+    if (!FondPrincipal.loadFromFile("asset/FondPrincipal.png")) { 
+        std::cerr << "Erreur : Im345possible de charger l'image.\n";
         return -1;
     }
 
-    if (!StatText.loadFromFile("asset/TableauStats.png")) { 
-        std::cerr << "Erreur : Impossible de charger l'image.\n";
-        return -1;
-    }
-
-    sf::Sprite SpCmd(CmdText),SpStat(StatText),Wall(TextWall);
-    SpCmd.setScale(0.75f, 0.75f);
-    SpCmd.setPosition(600, 350);
+    
+    sf::Sprite SpStat(StatText), FondP(FondPrincipal);
 
     SpStat.setScale(0.65f, 0.65f);
     SpStat.setPosition(100, 200);
 
+    FondP.setPosition(0,0);
 
     DefinirText("Prochaine piece : ", textNextPiece, font, 582, 70);
     
@@ -116,23 +85,18 @@ int main() {
     SetText(textLignes, font, 180, 400);
 
     
-    Wall.setTextureRect(sf::IntRect(0,0,18,18));
-    Wall.setPosition(462, 60);
 
     if (!TextTruc.loadFromFile("asset/tiles.png")){
         return EXIT_FAILURE;
     }
-    if (!TextWall.loadFromFile("asset/tilesWall.png")){
-        return EXIT_FAILURE;
-    }   
-
+   
     int ValeurY=0;
 
     menu Menu(window, font);
     window.clear();
     while(window.isOpen()){
         sf::Event event;
-        bloc Monbloc(TextTruc, window, 360, 60);        
+        bloc Monbloc(TextTruc, window, 360, 136 );        
         MonblocCopy = &Monbloc;
         Monbloc.BlocAleatoire(); Monbloc.CouleurAleatoire(); Monbloc.RegenererBloc();
         bool ThreadLance = false, TouchePresse = false;
@@ -159,9 +123,7 @@ int main() {
                     window.close();
                     break;
                 }                
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
-                    Monbloc.AjouterNiveau(1); 
-                }         
+                      
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) Monbloc.mouvement("right");
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) Monbloc.mouvement("left");
@@ -189,25 +151,24 @@ int main() {
                 textNiveau.setString(Monbloc.AfficherNiveau());
                 textLignes.setString(Monbloc.AfficherLigneDetruite());
                 window.clear(sf::Color(15, 15, 15));
+                window.draw(FondP);
                 Monbloc.DessinerLeTableau();
                 Monbloc.next(); Monbloc.Saved();
-                window.draw(textNiveau); window.draw(textLignes); window.draw(textScore); window.draw(textNextPiece); window.draw(SpCmd); window.draw(SpStat);
-                WallMaker(Wall);
-                CadreNextMaker(Wall);
+                window.draw(textNiveau); window.draw(textLignes); window.draw(textScore);
                 window.display();
 
 
-                float centerXscore = (122 + 252) / 2.0f, centerYScore = 345;
+                float centerXscore = (650 + 827) / 2.0f, centerYScore = 282;
                 sf::FloatRect textBoundsScore = textScore.getLocalBounds();
                 textScore.setOrigin(textBoundsScore.left + textBoundsScore.width / 2.0f, textBoundsScore.top + textBoundsScore.height / 2.0f);
                 textScore.setPosition(centerXscore, centerYScore);
 
-                float centerXlvl = (122 + 252) / 2.0f, centerYlvl = 275;
+                float centerXlvl = (66 + 246) / 2.0f, centerYlvl = 470;
                 sf::FloatRect textBoundsLvl = textNiveau.getLocalBounds();
                 textNiveau.setOrigin(textBoundsLvl.left + textBoundsLvl.width / 2.0f, textBoundsLvl.top + textBoundsLvl.height / 2.0f);
                 textNiveau.setPosition(centerXlvl, centerYlvl);
 
-                float centerXLigne = (122 + 252) / 2.0f, centerYLigne = 415;
+                float centerXLigne = (66 + 246) / 2.0f, centerYLigne = 345;
                 sf::FloatRect textBoundsLignes = textLignes.getLocalBounds();
                 textLignes.setOrigin(textBoundsLignes.left + textBoundsLignes.width / 2.0f, textBoundsLignes.top + textBoundsLignes.height / 2.0f);
                 textLignes.setPosition(centerXLigne, centerYLigne);

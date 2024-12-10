@@ -104,10 +104,24 @@ void bloc::next(){
 
     for(int i=0;i<4;i++)for(int j=0;j<2;j++) tab2D[i][j]=tab1D[k++];
 
+    int X, Y;
+    if(NbBlocSuivant == 0){
+        X = ((813-656)/2)+655-9;
+        Y = ((190-75)/2)+75 - 36;
+    }else{
+        X = ((813-656)/2)+655-18;
+        if(NbBlocSuivant == 6){
+            Y = ((190-75)/2)+75 - 16;
+        }else{
+            Y = ((190-75)/2)+75 - 27;
+        }
+    }
+
+    
     for(int i=0;i<4;i++)for(int j=0;j<2;j++){        
         if(tab2D[i][j] >= 1){
             Tiles.setTextureRect(sf::IntRect(18*CouleurAleaSuivant,0,18,18));
-            Tiles.setPosition(sf::Vector2f((610+(j*18)),(130+(i*18))));
+            Tiles.setPosition(sf::Vector2f((X+(j*18)),(Y+(i*18))));
             AddrWindow->draw(Tiles);
         }
     }
@@ -359,6 +373,7 @@ void bloc::ScoreAdd(std::string TypePts, int Nbr){
 }
 
 void bloc::ChangementNiveau(){
+    if(Niveau == 29) return;
     if((Niveau+1)*4 <= LigneDetruite){
         Niveau++;
         LigneDetruite = 0;
@@ -714,10 +729,25 @@ void bloc::Saved(){
 
     for(int i=0;i<4;i++)for(int j=0;j<2;j++) tab2D[i][j]=tab1D[k++];
 
+    int X, Y;
+    std::cout << BlocSaved;
+    if(BlocSaved == 0){
+        X = ((237-80)/2)+80;
+        Y = ((252-138)/2)+138 - 36;
+    }else{
+        X = ((237-80)/2)+80-18;
+        if(BlocSaved == 6){
+            Y = ((252-138)/2)+138 - 16;
+        }else{
+            Y = ((252-138)/2)+138 - 27;
+        }
+    }
+
+
     for(int i=0;i<4;i++)for(int j=0;j<2;j++){        
         if(tab2D[i][j] >= 1){
             Tiles.setTextureRect(sf::IntRect(18*CouleurSaved,0,18,18));
-            Tiles.setPosition(sf::Vector2f((218+(j*18)),(136+(i*18))));
+            Tiles.setPosition(sf::Vector2f((X+(j*18)),(Y+(i*18))));
             AddrWindow->draw(Tiles);
         }
     }
@@ -728,6 +758,3 @@ int bloc::GetY(){
     return PosTot.Y1;
 }
 
-void bloc::AjouterNiveau(int niveau){
-    Niveau += niveau;
-}

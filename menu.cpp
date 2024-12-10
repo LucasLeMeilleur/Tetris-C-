@@ -100,9 +100,6 @@ int menu::MenuJeu(){
     Pause.setOrigin(PausetextBounds.width / 2, PausetextBounds.height / 2); 
     Pause.setPosition(windowSize.x / 2, windowSize.y / 2); 
 
-
-
-
     Quitter.setFont(*font);
     Quitter.setString("Quitter");
     Quitter.setCharacterSize(30);

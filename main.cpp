@@ -14,7 +14,7 @@ bloc* MonblocCopy;
 
 void Deplacement(){
     do{
-        MonblocCopy->mouvement("down");     
+        MonblocCopy->mouvement("down"); 
         sf::sleep(sf::milliseconds(MonblocCopy->VitesseBloc()));   
         if(MonblocCopy->DetectionBlocEnBas() || MonblocCopy->DetectionBlocEmpile()){   
             int LigneTmp =0;  
@@ -50,6 +50,8 @@ void DefinirText(std::string text, sf::Text &Label, sf::Font &Font, int x, int y
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(900,540), "Tetris game");
+    window.setActive(true);
+
     window.setFramerateLimit(60);  
     sf::Thread threadDeplacement(&Deplacement);
     sf::Texture TextTruc, TextWall,StatText, FondPrincipal;
@@ -96,7 +98,7 @@ int main() {
     window.clear();
     while(window.isOpen()){
         sf::Event event;
-        bloc Monbloc(TextTruc, window, 360, 136 );        
+        bloc Monbloc(TextTruc, &window, 360, 136 );        
         MonblocCopy = &Monbloc;
         Monbloc.BlocAleatoire(); Monbloc.CouleurAleatoire(); Monbloc.RegenererBloc();
         bool ThreadLance = false, TouchePresse = false;
@@ -125,23 +127,42 @@ int main() {
                 }                
                       
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) Monbloc.mouvement("right");
-                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) Monbloc.mouvement("left");
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+                    Monbloc.mouvement("right");
+
+                    Monbloc.VisualiserBloc();
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+                    Monbloc.mouvement("left");
+
+                    Monbloc.VisualiserBloc();
+                }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
                     if(!Monbloc.DetectionBlocEmpile()){
                         Monbloc.mouvement("down");
                         if(Monbloc.GetY() != ValeurY)  Monbloc.ScoreAdd("DescenteRapide", 0);
+
+                        Monbloc.VisualiserBloc();
                     }
                 }
                 else if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
                         Monbloc.ChangerBloc();
+
+                        Monbloc.VisualiserBloc();
                 }
                 else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
                     if(!TouchePresse){
                         Monbloc.RotationBloc();
+
+                        Monbloc.VisualiserBloc();
                         TouchePresse=true;
                     }
-                    
+                }
+                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+                    if(!TouchePresse){
+                        Monbloc.AtterirEnBas();
+                        TouchePresse=true;
+                    }
                 }
                 else TouchePresse = false;
 
@@ -152,12 +173,14 @@ int main() {
                 textLignes.setString(Monbloc.AfficherLigneDetruite());
                 window.clear(sf::Color(15, 15, 15));
                 window.draw(FondP);
+
                 Monbloc.DessinerLeTableau();
                 Monbloc.next(); Monbloc.Saved();
                 window.draw(textNiveau); window.draw(textLignes); window.draw(textScore);
+                
+                Monbloc.VisualiserBloc();
                 window.display();
-
-
+            
                 float centerXscore = (650 + 827) / 2.0f, centerYScore = 282;
                 sf::FloatRect textBoundsScore = textScore.getLocalBounds();
                 textScore.setOrigin(textBoundsScore.left + textBoundsScore.width / 2.0f, textBoundsScore.top + textBoundsScore.height / 2.0f);

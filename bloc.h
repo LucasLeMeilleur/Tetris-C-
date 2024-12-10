@@ -23,17 +23,16 @@ class bloc{
         void DeplacementGauche();
         void DeplacementDroite();
         void DeplacementBas();
-
+        void DrawTiles();
 
     public:
-        bloc(const sf::Texture& Textruc ,sf::RenderWindow &window, int initialX, int initialY);
+        bloc(const sf::Texture &Textruc ,sf::RenderWindow* window, int initialX, int initialY);
         ~bloc();
         void assembly();
         void next();
         void mouvement(std::string NomMouv);
         void SuppLine();
         void ScoreAdd(std::string TypePts, int Nbr);
-        void DrawTiles();
         void drawASprite(sf::Sprite &Tile);
         void DessinerLeTableau();
         void Ajouter(int X, int Y,int Nbr);
@@ -50,6 +49,8 @@ class bloc{
         void ChangerBloc();
         void RemplacerBlocSave();
         void Saved();
+        void VisualiserBloc();
+        void AtterirEnBas();
 
         int GetY();
 

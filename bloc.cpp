@@ -11,12 +11,11 @@
 #include <iostream>
 
 
-    bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow &window, int initialX, int initialY): Tiles(TextTruc){
+    bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow* window, int initialX, int initialY): Tiles(TextTruc), AddrWindow(window){
     std::srand(std::time(0));
     InitialiserPOS();
     CouleurAleatoire();
     BlocAleatoire();
-    AddrWindow = &window;    
     Tiles.setTextureRect(sf::IntRect(0,0,18,18));
     Tiles.setPosition(initialX, initialY);
     TabX = initialX;
@@ -302,6 +301,7 @@ void bloc::ResetBloc(){
     rotation =0;
     InitialiserPOS();
     RegenererBloc();
+    
 }
 
 void bloc::VoirLeTableau(){
@@ -751,6 +751,104 @@ void bloc::Saved(){
             AddrWindow->draw(Tiles);
         }
     }
+}
+
+void bloc::AtterirEnBas(){
+    
+    for (int i = 0; i < 20; i++){
+        if(!DetectionBlocEmpile()){
+            DeplacementBas();    
+            if (Niveau == 0) score += 2;
+            else score += Niveau*2;
+        }
+    }
+    ResetBloc();
+    
+}
+
+void bloc::VisualiserBloc(){
+
+    sf::Texture texture;
+    if (!texture.loadFromFile("asset/tiles.png")) {
+        EXIT_FAILURE;
+    }
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+    sprite.setTextureRect(sf::IntRect(18*CouleurAlea,0,18,18));
+    sprite.setColor(sf::Color(255, 255, 255, 128)); // Opacité à 50%
+
+
+
+    const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
+    const int* Y[] = {&PosTot.Y1, &PosTot.Y2, &PosTot.Y3, &PosTot.Y4};
+    int XPlusGrand= *X[0], XPlusPetit= *X[0], YPlusGrand= *Y[0], difference=0;
+
+    for (int i = 0; i < 4; i++){
+        if(*X[i]>XPlusGrand) XPlusGrand = *X[i];
+    }
+    for (int i = 0; i < 4; i++){
+        if(*X[i]<XPlusPetit) XPlusPetit = *X[i];
+    }
+    
+    for (int i = 0; i < 4; i++){
+        if(*Y[i]>YPlusGrand){
+            YPlusGrand = *Y[i];
+        }
+    }
+
+    
+    
+
+    int PatterneA[28] = { 
+                 0,2,4,6,   //I
+                 0,2,4,5,    // L
+                 1,3,4,5,   // L reversed      
+                 0,2,3,4,   // T 
+                 0,2,3,5,    // Z
+                 1,2,3,4,     // Z reversed             
+                 0,1,2,3     // carré
+    };
+
+
+
+    for(int i=YPlusGrand; i<20; i++){
+
+
+        int Y = i-YPlusGrand;
+        if(
+            (map[PosTot.X1][PosTot.Y1 + Y] == 0) &&
+            (map[PosTot.X2][PosTot.Y2 + Y] == 0) &&
+            (map[PosTot.X3][PosTot.Y3 + Y] == 0) &&
+            (map[PosTot.X4][PosTot.Y4 + Y] == 0)
+        && 
+            ((
+                (map[PosTot.X1][PosTot.Y1 + Y+1] >=1)||
+                (map[PosTot.X2][PosTot.Y2 + Y+1] >=1)||
+                (map[PosTot.X3][PosTot.Y3 + Y+1] >=1)||
+                (map[PosTot.X4][PosTot.Y4 + Y+1] >=1)
+            
+            )
+            || 
+                (i==19)
+            )
+
+        ){
+            sprite.setPosition(360+18*PosTot.X1,136+18*(PosTot.Y1+Y));
+            AddrWindow->draw(sprite);
+            sprite.setPosition(360+18*PosTot.X2,136+18*(PosTot.Y2+Y));
+            AddrWindow->draw(sprite);
+            sprite.setPosition(360+18*PosTot.X3,136+18*(PosTot.Y3+Y));
+            AddrWindow->draw(sprite);
+            sprite.setPosition(360+18*PosTot.X4,136+18*(PosTot.Y4+Y));
+            AddrWindow->draw(sprite);   
+            break;
+        }
+        
+    }
+
+
+    
+    
 }
 
 

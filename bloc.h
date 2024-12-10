@@ -14,7 +14,7 @@ class bloc{
             int X1,X2,X3,X4,Y1,Y2,Y3,Y4;
         };
         LesPos PosTot;
-        bool VPerdu= false;
+        bool VPerdu= false, DejaSave=false;
 
         bool CheckLineLineRotateH(int (&Tab)[4][4]);
         bool CheckLineLineRotateV(int (&Tab)[4][4]);

@@ -288,7 +288,14 @@ bool bloc::DetectionBlocEmpile(){
 }
 
 void bloc::ResetBloc(){
-    //const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
+    DejaSave = false;
+    int LigneTmp =0;  
+        while(checkLine()){
+            SuppLine();
+            LigneTmp++;           
+        }
+    if(LigneTmp >= 1) ScoreAdd("Ligne", LigneTmp);
+    
     const int* Y[] = {&PosTot.Y1, &PosTot.Y2, &PosTot.Y3, &PosTot.Y4};
     
     for(int i = 0; i < 4 ; i++){
@@ -677,6 +684,10 @@ void bloc::SuppLineRotateV(int Tab[4][4]) {
 
 void bloc::ChangerBloc(){
 
+    if(DejaSave) return;
+
+    DejaSave = true;
+
     rotation = 0;
     if(PosTot.Y1 >= 5) return;
 
@@ -716,6 +727,9 @@ void bloc::RemplacerBlocSave(){
 }
 
 void bloc::Saved(){
+
+
+
     if(BlocSaved == 8) return;
     const int KpatternInit = BlocSaved*4;
     int Kpattern = KpatternInit, k=0;

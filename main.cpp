@@ -166,6 +166,10 @@ int main() {
                 }
                 else TouchePresse = false;
 
+
+
+
+
                 renderTexture.clear();
                 Monbloc.ChangementNiveau();
                 textScore.setString(Monbloc.AfficherScore());

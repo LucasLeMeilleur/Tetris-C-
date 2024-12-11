@@ -96,19 +96,22 @@ int main() {
 
     menu Menu(window, font);
     window.clear();
+
+    int MenuOptions = Menu.MenuJeu();
     while(window.isOpen()){
+
+        std::cout << "Test\n";
+        MonblocCopy = nullptr;
         sf::Event event;
         bloc Monbloc(TextTruc, &window, 360, 136 );        
         MonblocCopy = &Monbloc;
         Monbloc.BlocAleatoire(); Monbloc.CouleurAleatoire(); Monbloc.RegenererBloc();
         bool ThreadLance = false, TouchePresse = false;
 
-        int MenuOptions = Menu.MenuJeu();
 
-        if(MenuOptions == 1){
-            while(true){            
-                if(MonblocCopy->Perdu()) break;
-                
+        while(MenuOptions == 1){
+            while(!MonblocCopy->Perdu()){            
+
                 if (ThreadLance == false){ 
                     threadDeplacement.launch();
                     ThreadLance = true;
@@ -205,9 +208,10 @@ int main() {
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)){   
                     sf::Texture texture;
                     texture.create(900,540);
-                    texture.update(window);         
+                    texture.update(window);       
+                    
+                    Menu.Pause(texture);  
                     threadDeplacement.terminate(); 
-                    Menu.Flou(texture);
                     while (true){
                         if(sf::Keyboard::isKeyPressed(sf::Keyboard::O)){
                             threadDeplacement.launch();
@@ -219,15 +223,26 @@ int main() {
                 sf::sleep(sf::milliseconds(150));    
                 ValeurY= Monbloc.GetY();     
             }
-            if(window.isOpen()) window.close();
+
+
             threadDeplacement.terminate();
-            Monbloc.VoirLeTableau();
-            std::cout << "\n\r---------- PERDU ! ----------";
-            std::cout << "\n\n\rVoici ton score : " << Monbloc.AfficherScore() << "\n";
-            std::cout << "Appuyez sur entree pour quitter...";
             Monbloc.~bloc();
-            std::cin.get();
-        }else if(MenuOptions == 0){
+            MonblocCopy = nullptr;
+            
+            sf::Texture textureFond;
+            textureFond.create(900,540);
+            textureFond.update(window);       
+            int ChoixMenuPerdu = Menu.MenuPerdu(Monbloc.AfficherScore(), textureFond);
+
+            if(ChoixMenuPerdu == 1){
+                if(window.isOpen()) window.close();
+            }else{
+                threadDeplacement.terminate();
+                break;
+            }
+            
+        }
+        if(MenuOptions == 0){
             window.close();
             Monbloc.~bloc();
             MonblocCopy = nullptr;

@@ -51,6 +51,8 @@ class bloc{
         void Saved();
         void VisualiserBloc();
         void AtterirEnBas();
+        void Recommencer();
+
 
         int GetY();
 

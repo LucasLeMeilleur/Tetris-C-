@@ -301,7 +301,7 @@ void bloc::ResetBloc(){
     for(int i = 0; i < 4 ; i++){
         if(*Y[i] <= 3 ){
             VPerdu = true;
-            break;
+            return;
         }
     }
 
@@ -323,7 +323,7 @@ void bloc::VoirLeTableau(){
 
 void bloc::ViderTableau(){
     for(int i=0; i<20; i++){
-        for(int j=0; i<10; j++) map[i][j] = 0;
+        for(int j=0; j<10; j++) map[j][i] = 0;
     }
 }
 
@@ -727,9 +727,6 @@ void bloc::RemplacerBlocSave(){
 }
 
 void bloc::Saved(){
-
-
-
     if(BlocSaved == 8) return;
     const int KpatternInit = BlocSaved*4;
     int Kpattern = KpatternInit, k=0;
@@ -740,11 +737,9 @@ void bloc::Saved(){
             Kpattern++;
         }else tab1D[i]=0; 
     }     
-
     for(int i=0;i<4;i++)for(int j=0;j<2;j++) tab2D[i][j]=tab1D[k++];
 
     int X, Y;
-    std::cout << BlocSaved;
     if(BlocSaved == 0){
         X = ((237-80)/2)+80;
         Y = ((252-138)/2)+138 - 36;
@@ -870,3 +865,18 @@ int bloc::GetY(){
     return PosTot.Y1;
 }
 
+void bloc::Recommencer(){
+    VPerdu = false;
+    score = 0;
+    LigneDetruiteTot = 0;
+    LigneDetruite = 0;
+    LigneComplete = 0;
+    Niveau = 0;
+    ViderTableau();
+
+    BlocSaved = 0;
+    CouleurSaved = 0;
+    NbBloc = 0; NbBlocSuivant=0; CouleurAleaSuivant=0; CouleurAlea =0;
+
+    ResetBloc();
+}

@@ -1,10 +1,13 @@
 #include "bloc.h"
 #include "menu.h"
+#ifndef SFML_STATIC
 #define SFML_STATIC
+#endif
 #include <SFML/Graphics.hpp>
 
 #include <iostream>
 #include <codecvt>
+
 
 
 
@@ -86,7 +89,6 @@ int main() {
     SetText(textNiveau, font, 110, 240);
     SetText(textLignes, font, 180, 400);
 
-    
 
     if (!TextTruc.loadFromFile("asset/tiles.png")){
         return EXIT_FAILURE;
@@ -99,16 +101,12 @@ int main() {
 
     int MenuOptions = Menu.MenuJeu();
     while(window.isOpen()){
-
-        std::cout << "Test\n";
         MonblocCopy = nullptr;
         sf::Event event;
         bloc Monbloc(TextTruc, &window, 360, 136 );        
         MonblocCopy = &Monbloc;
         Monbloc.BlocAleatoire(); Monbloc.CouleurAleatoire(); Monbloc.RegenererBloc();
         bool ThreadLance = false, TouchePresse = false;
-
-
         while(MenuOptions == 1){
             while(!MonblocCopy->Perdu()){            
 

@@ -11,7 +11,7 @@
 #include <iostream>
 
 
-    bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow* window, int initialX, int initialY): Tiles(TextTruc), AddrWindow(window){
+bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow* window, int initialX, int initialY): AddrWindow(window), Tiles(TextTruc){
     std::srand(std::time(0));
     InitialiserPOS();
     CouleurAleatoire();
@@ -790,7 +790,7 @@ void bloc::VisualiserBloc(){
 
     const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
     const int* Y[] = {&PosTot.Y1, &PosTot.Y2, &PosTot.Y3, &PosTot.Y4};
-    int XPlusGrand= *X[0], XPlusPetit= *X[0], YPlusGrand= *Y[0], difference=0;
+    int XPlusGrand= *X[0], XPlusPetit= *X[0], YPlusGrand= *Y[0];
 
     for (int i = 0; i < 4; i++){
         if(*X[i]>XPlusGrand) XPlusGrand = *X[i];
@@ -804,21 +804,6 @@ void bloc::VisualiserBloc(){
             YPlusGrand = *Y[i];
         }
     }
-
-    
-    
-
-    int PatterneA[28] = { 
-                 0,2,4,6,   //I
-                 0,2,4,5,    // L
-                 1,3,4,5,   // L reversed      
-                 0,2,3,4,   // T 
-                 0,2,3,5,    // Z
-                 1,2,3,4,     // Z reversed             
-                 0,1,2,3     // carré
-    };
-
-
 
     for(int i=YPlusGrand; i<20; i++){
 

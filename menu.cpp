@@ -51,7 +51,6 @@ void menu::Flou(sf::Texture& texture){
 }
 
 void menu::Pause(sf::Texture& texture){
-
     sf::Text Pause;
     Pause.setFont(*font);
     Pause.setCharacterSize(20);
@@ -59,7 +58,6 @@ void menu::Pause(sf::Texture& texture){
     Pause.setFillColor(sf::Color::White);
     Pause.setStyle(sf::Text::Bold);
     Pause.setString("         Pause \n O pour continuer");
-
     Flou(texture);
     AddrWindow->draw(Pause); 
 }

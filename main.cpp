@@ -5,6 +5,7 @@
 #endif
 #include <SFML/Graphics.hpp>
 
+
 #include <iostream>
 #include <codecvt>
 
@@ -34,7 +35,7 @@ void Deplacement(){
 void SetText(sf::Text &Text, sf::Font &font, int posX, int posY){
     Text.setFont(font);
     Text.setCharacterSize(20);
-    Text.setPosition(posX,posY);
+    Text.setPosition(sf::Vector2f(posX,posY));
     Text.setFillColor(sf::Color::White);
     Text.setStyle(sf::Text::Bold);
 }
@@ -52,7 +53,7 @@ void DefinirText(std::string text, sf::Text &Label, sf::Font &Font, int x, int y
 
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(900,540), "Tetris game");
+    sf::RenderWindow window(sf::VideoMode(900, 540), "Tetris game");
     window.setActive(true);
 
     window.setFramerateLimit(60);  
@@ -60,7 +61,10 @@ int main() {
     sf::Texture TextTruc, TextWall,StatText, FondPrincipal;
 
     sf::RenderTexture renderTexture;
-    renderTexture.create(900, 540);
+    if (!renderTexture.create(900, 540)) {
+        std::cerr << "Impossible de créer la RenderTexture" << std::endl;
+        return -1;
+    }
     sf::Font font;
 
     if (!font.loadFromFile("asset/arial.ttf")) {
@@ -122,23 +126,23 @@ int main() {
                     }
                 }
                 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
                     window.close();
                     break;
                 }                
                       
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)){
                     Monbloc.mouvement("right");
 
                     Monbloc.VisualiserBloc();
                 }
-                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)){
                     Monbloc.mouvement("left");
 
                     Monbloc.VisualiserBloc();
                 }
-                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)){
                     if(!Monbloc.DetectionBlocEmpile()){
                         Monbloc.mouvement("down");
                         if(Monbloc.GetY() != ValeurY)  Monbloc.ScoreAdd("DescenteRapide", 0);
@@ -146,20 +150,21 @@ int main() {
                         Monbloc.VisualiserBloc();
                     }
                 }
-                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift)){
                         Monbloc.ChangerBloc();
 
                         Monbloc.VisualiserBloc();
                 }
-                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)){
                     if(!TouchePresse){
+                        std::cout << "Rotation";
                         Monbloc.RotationBloc();
 
                         Monbloc.VisualiserBloc();
                         TouchePresse=true;
                     }
                 }
-                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+                else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)){
                     if(!TouchePresse){
                         Monbloc.AtterirEnBas();
                         TouchePresse=true;
@@ -185,6 +190,7 @@ int main() {
                 
                 Monbloc.VisualiserBloc();
                 window.display();
+                
             
                 float centerXscore = (650 + 827) / 2.0f, centerYScore = 282;
                 sf::FloatRect textBoundsScore = textScore.getLocalBounds();
@@ -203,15 +209,16 @@ int main() {
 
 
 
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)){   
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)){   
+
                     sf::Texture texture;
-                    texture.create(900,540);
+                    texture.create(900, 540);  
                     texture.update(window);       
                     
                     Menu.Pause(texture);  
                     threadDeplacement.terminate(); 
                     while (true){
-                        if(sf::Keyboard::isKeyPressed(sf::Keyboard::O)){
+                        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::O)){
                             threadDeplacement.launch();
                             break;
                         }

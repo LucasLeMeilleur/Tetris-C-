@@ -54,7 +54,7 @@ void menu::Pause(sf::Texture& texture){
     sf::Text Pause;
     Pause.setFont(*font);
     Pause.setCharacterSize(20);
-    Pause.setPosition(370,230);
+    Pause.setPosition(370.0,230.0);
     Pause.setFillColor(sf::Color::White);
     Pause.setStyle(sf::Text::Bold);
     Pause.setString("         Pause \n O pour continuer");

@@ -11,15 +11,15 @@
 #include <iostream>
 
 
-bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow* window, int initialX, int initialY): AddrWindow(window), Tiles(TextTruc){
+bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow* window, int initialY, int initialX): AddrWindow(window), Tiles(TextTruc){
     std::srand(std::time(0));
     InitialiserPOS();
     CouleurAleatoire();
     BlocAleatoire();
     Tiles.setTextureRect(sf::IntRect(0,0,18,18));
     Tiles.setPosition(initialX, initialY);
-    TabX = initialX;
     TabY = initialY;
+    TabX = initialX;
     VPerdu = false;
 
     int PatterneA[28] = { 
@@ -36,7 +36,7 @@ bloc::bloc(const sf::Texture& TextTruc, sf::RenderWindow* window, int initialX, 
     for(int i = 0; i <28;  i++) Patterne[i] = PatterneApp[i];
 
     //Mise en place de la map colonne ligne  (à inverser LOL)
-    for(int i = 0; i <10;  i++) for(int j = 0; j<20; j++) map[i][j]= 0;
+    for(int i = 0; i <20;  i++) for(int j = 0; j<10; j++) map[i][j]= 0;
 }
 
 bloc::~bloc(){
@@ -86,7 +86,7 @@ void bloc::assembly(){
             DefinitionDeStruct(w,KpatternInit,j,i);
             w++;
         }
-        map[j][i]=tab1D[k++];
+        map[i][j]=tab1D[k++];
     }
 }
 
@@ -130,11 +130,11 @@ void bloc::next(){
 
 bool bloc::checkLine(){
 
-    for(int i = 0; i<20; i++){
+    for(int i = 0; i<10; i++){
         int compteur = 0;
-        for(int j = 0; j<10; j++){
-            if(map[j][i] > 0) compteur++;
-            if(map[j][i] == 0) break;
+        for(int j = 0; j<20; j++){
+            if(map[i][j] > 0) compteur++;
+            if(map[i][j] == 0) break;
             if(compteur == 10) {
                 LigneComplete = i;
                 return true;
@@ -161,12 +161,12 @@ void bloc::drawASprite(sf::Sprite &Tile){
 }
 
 void bloc::DessinerLeTableau(){
-    for(int i = 0; i<10; i++){ 
-        for(int j = 0; j<20; j++){
+    for(int i = 0; i<20; i++){ 
+        for(int j = 0; j<10; j++){
             if (map[i][j] >= 1) {
                 int Couleur = map[i][j];
                 Tiles.setTextureRect(sf::IntRect(18*Couleur,0,18,18));
-                Tiles.setPosition(sf::Vector2f(TabX+18*i, TabY+18*j));
+                Tiles.setPosition(sf::Vector2f(TabY+18*j,TabX+18*i));
                 DrawTiles();
             }
         }
@@ -175,18 +175,19 @@ void bloc::DessinerLeTableau(){
 }
 
 void bloc::Ajouter(int X, int Y, int  Nbr){
-    map[X][Y] = Nbr;
+    map[Y][X] = Nbr;
 }
 
 void bloc::DeplacementBas(){
     if(
         ((PosTot.Y1 >= 0 && PosTot.Y1 < 19) && (PosTot.Y2 >= 0 && PosTot.Y2 < 19) && (PosTot.Y3 >= 0 && PosTot.Y3 < 19) && (PosTot.Y4 >= 0 && PosTot.Y4 < 19))
         &&
-        (      ((map[PosTot.X1][PosTot.Y1+1] == 0) || PosTot.Y1+1 == PosTot.Y2 || PosTot.Y1+1 == PosTot.Y3 || PosTot.Y1+1 == PosTot.Y4)
-            && ((map[PosTot.X2][PosTot.Y2+1] == 0) || PosTot.Y2+1 == PosTot.Y3 || (PosTot.Y2+1 == PosTot.Y4 && PosTot.X2 == PosTot.X4)) 
-            && ((map[PosTot.X3][PosTot.Y3+1] == 0) || (PosTot.Y3+1 == PosTot.Y4 && PosTot.X3-1 == PosTot.X4) || (PosTot.Y3+1 == PosTot.Y4 && PosTot.X3 == PosTot.X4))
-            && ((map[PosTot.X4][PosTot.Y4+1] == 0) || (PosTot.Y4+1 == PosTot.Y1 && PosTot.X1 == PosTot.X4))      
+        (      ((map[PosTot.Y1+1][PosTot.X1] == 0) || PosTot.Y1+1 == PosTot.Y2 || PosTot.Y1+1 == PosTot.Y3 || PosTot.Y1+1 == PosTot.Y4)
+            && ((map[PosTot.Y2+1][PosTot.X2] == 0) || PosTot.Y2+1 == PosTot.Y3 || (PosTot.Y2+1 == PosTot.Y4 && PosTot.X2 == PosTot.X4)) 
+            && ((map[PosTot.Y3+1][PosTot.X3] == 0) || (PosTot.Y3+1 == PosTot.Y4 && PosTot.X3-1 == PosTot.X4) || (PosTot.Y3+1 == PosTot.Y4 && PosTot.X3 == PosTot.X4))
+            && ((map[PosTot.Y4+1][PosTot.X4] == 0) || (PosTot.Y4+1 == PosTot.Y1 && PosTot.X1 == PosTot.X4))      
         )
+
     ){
         Ajouter(PosTot.X1,PosTot.Y1, 0);
         Ajouter(PosTot.X2,PosTot.Y2, 0);
@@ -199,6 +200,7 @@ void bloc::DeplacementBas(){
         Ajouter(PosTot.X4,PosTot.Y4+1, CouleurAlea);
 
         PosTot.Y1++;PosTot.Y2++;PosTot.Y3++;PosTot.Y4++;
+        VoirLeTableau();
     }
 }
 
@@ -206,10 +208,10 @@ void bloc::DeplacementDroite(){
     if(
         (PosTot.X1 < 9 && PosTot.X2 < 9 && PosTot.X3 < 9 && PosTot.X4 <9)
         &&
-        (      ((map[PosTot.X1+1][PosTot.Y1] == 0) || PosTot.X1+1 == PosTot.X2)
-            && ((map[PosTot.X2+1][PosTot.Y2] == 0) || PosTot.X2+1 == PosTot.X3) 
-            && ((map[PosTot.X3+1][PosTot.Y3] == 0) || PosTot.X3+1 == PosTot.X4)
-            && ((map[PosTot.X4+1][PosTot.Y4] == 0) )
+        (      ((map[PosTot.Y1][PosTot.X1+1] == 0) || PosTot.X1+1 == PosTot.X2)
+            && ((map[PosTot.Y2][PosTot.X2+1] == 0) || PosTot.X2+1 == PosTot.X3) 
+            && ((map[PosTot.Y3][PosTot.X3+1] == 0) || PosTot.X3+1 == PosTot.X4)
+            && ((map[PosTot.Y4][PosTot.X4+1] == 0) )
         )   
     )
     {
@@ -231,10 +233,10 @@ void bloc::DeplacementGauche(){
     if(        
         (PosTot.X1 >= 1 && PosTot.X2 >= 1 && PosTot.X3 >= 1 && PosTot.X4 >= 1)
         &&
-        (      ((map[PosTot.X1-1][PosTot.Y1] == 0))
-            && ((map[PosTot.X2-1][PosTot.Y2] == 0) || PosTot.X2-1 == PosTot.X1) 
-            && ((map[PosTot.X3-1][PosTot.Y3] == 0) || PosTot.X3-1 == PosTot.X2)
-            && ((map[PosTot.X4-1][PosTot.Y4] == 0) || PosTot.X4-1 == PosTot.X3)
+        (      ((map[PosTot.Y1][PosTot.X1-1] == 0))
+            && ((map[PosTot.Y2][PosTot.X2-1] == 0) || PosTot.X2-1 == PosTot.X1) 
+            && ((map[PosTot.Y3][PosTot.X3-1] == 0) || PosTot.X3-1 == PosTot.X2)
+            && ((map[PosTot.Y4][PosTot.X4-1] == 0) || PosTot.X4-1 == PosTot.X3)
         )   
     ){
         Ajouter(PosTot.X4,PosTot.Y4, 0);
@@ -280,10 +282,10 @@ bool bloc::DetectionBlocEnBas(){
 }
 
 bool bloc::DetectionBlocEmpile(){
-    if(map[PosTot.X1][PosTot.Y1+1] >= 1 && !( ((PosTot.X2 == PosTot.X1) && (PosTot.Y2 == PosTot.Y1+1)) || ((PosTot.X1 == PosTot.X3) && (PosTot.Y1+1 == PosTot.Y3)) || ((PosTot.X1 == PosTot.X4) && (PosTot.Y1+1 == PosTot.Y4)) ) ) return true;
-    if(map[PosTot.X2][PosTot.Y2+1] >= 1 && !( ((PosTot.X2 == PosTot.X1) && (PosTot.Y2+1 == PosTot.Y1)) || ((PosTot.X2 == PosTot.X3) && (PosTot.Y2+1 == PosTot.Y3)) || ((PosTot.X2 == PosTot.X4) && (PosTot.Y2+1 == PosTot.Y4)) ) ) return true;
-    if(map[PosTot.X3][PosTot.Y3+1] >= 1 && !( ((PosTot.X3 == PosTot.X1) && (PosTot.Y3+1 == PosTot.Y1)) || ((PosTot.X2 == PosTot.X3) && (PosTot.Y2 == PosTot.Y3+1)) || ((PosTot.X3 == PosTot.X4) && (PosTot.Y3+1 == PosTot.Y4)) ) ) return true;
-    if(map[PosTot.X4][PosTot.Y4+1] >= 1 && !( ((PosTot.X4 == PosTot.X1) && (PosTot.Y4+1 == PosTot.Y1)) || ((PosTot.X4 == PosTot.X3) && (PosTot.Y4+1 == PosTot.Y3)) || ((PosTot.X2 == PosTot.X4) && (PosTot.Y2 == PosTot.Y4+1)) ) ) return true;
+    if(map[PosTot.Y1+1][PosTot.X1] >= 1 && !( ((PosTot.Y2 == PosTot.Y1+1) && (PosTot.X2 == PosTot.X1)) || ((PosTot.Y1+1 == PosTot.Y3) && (PosTot.X1 == PosTot.X3)) || ((PosTot.Y1+1 == PosTot.Y4) && (PosTot.X1 == PosTot.X4)) ) ) return true;
+    if(map[PosTot.Y2+1][PosTot.X2] >= 1 && !( ((PosTot.Y2+1 == PosTot.Y1) && (PosTot.X2 == PosTot.X1)) || ((PosTot.Y2+1 == PosTot.Y3) && (PosTot.X2 == PosTot.X3)) || ((PosTot.Y2+1 == PosTot.Y4) && (PosTot.X2 == PosTot.X4)) ) ) return true;
+    if(map[PosTot.Y3+1][PosTot.X3] >= 1 && !( ((PosTot.Y3+1 == PosTot.Y1) && (PosTot.X3 == PosTot.X1)) || ((PosTot.Y3+1 == PosTot.Y2) && (PosTot.X3 == PosTot.X2)) || ((PosTot.Y3+1 == PosTot.Y4) && (PosTot.X3 == PosTot.X4)) ) ) return true;
+    if(map[PosTot.Y4+1][PosTot.X4] >= 1 && !( ((PosTot.Y4+1 == PosTot.Y1) && (PosTot.X4 == PosTot.X1)) || ((PosTot.Y4+1 == PosTot.Y3) && (PosTot.X4 == PosTot.X3)) || ((PosTot.Y4+1 == PosTot.Y2) && (PosTot.X4 == PosTot.X2)) ) ) return true;
     return false;
 }
 
@@ -315,7 +317,7 @@ void bloc::VoirLeTableau(){
     std::cout <<"\n\n";
     for(int i =0; i <20 ; i++){
         for(int j=0 ; j<10; j++){
-            std::cout << map[j][i];
+            std::cout << map[i][j];
         }       
         std::cout << "\n";
     }
@@ -323,7 +325,7 @@ void bloc::VoirLeTableau(){
 
 void bloc::ViderTableau(){
     for(int i=0; i<20; i++){
-        for(int j=0; j<10; j++) map[j][i] = 0;
+        for(int j=0; j<10; j++) map[i][j] = 0;
     }
 }
 
@@ -336,17 +338,17 @@ void bloc::SuppLine(){
     LigneDetruite++;
     LigneDetruiteTot++;
     int LigneComplete = 0;
-    int mapAnnexe[10][20];
+    int mapAnnexe[20][10];
 
     for (int i = 0; i < 20; i++){
-        for (int j = 0; j < 10; j++) mapAnnexe[j][i] = map[j][i];  
+        for (int j = 0; j < 10; j++) mapAnnexe[i][j] = map[i][j];  
     }
 
     for(int i = 0; i<20; i++){
         int compteur = 0;
         for(int j = 0; j<10; j++){
-            if(map[j][i] > 0) compteur++;
-            if(map[j][i] == 0) break;
+            if(map[i][j] > 0) compteur++;
+            if(map[i][j] == 0) break;
             if(compteur == 10){
                 LigneComplete = i;
             }
@@ -356,7 +358,7 @@ void bloc::SuppLine(){
 
     for(int i = LigneComplete; i>0; i--){
         for (int j= 0; j < 10; j++){
-            map[j][i] = mapAnnexe[j][i-1];  
+            map[i][j] = mapAnnexe[i-1][j];  
         }       
     }
 }
@@ -392,14 +394,16 @@ void bloc::RotationBloc(){
     
 
     if(NbBloc == 6) return;
-    if((NbBloc == 0) && (PosTot.X1 >= 8)) return;
+    if((NbBloc == 0) && (PosTot.X1 > 6)) return;
     if((NbBloc == 0) && (rotation == 1) && (PosTot.Y4 >= 16)) return;
 
 
 
     if((NbBloc !=1 ) && (PosTot.X1 >= 9))return;
-    if((NbBloc !=1 ) && (rotation == 1) && (PosTot.Y4 >= 17))return;
+    if((NbBloc !=1 ) && (rotation == 1) && ((PosTot.Y4 >= 17) || (PosTot.X1 >= 8)))return;
     
+
+
 
     int tab16Cases[4][4], tab16CasesR[4][4];
     const int* X[] = {&PosTot.X1, &PosTot.X2, &PosTot.X3, &PosTot.X4};
@@ -413,6 +417,7 @@ void bloc::RotationBloc(){
         if(*Y[i]<YPlusPtit) YPlusPtit = *Y[i];
     }
 
+
     //Si bloc dans la rangée alors on ne fait pas
 
     switch (NbBloc){
@@ -420,11 +425,11 @@ void bloc::RotationBloc(){
             switch (rotation){
             case 0:
                 for (int i = YPlusPtit; i < YPlusPtit+2; i++)for (int j = XPlusPtit+2; j < XPlusPtit+4; j++)
-                        if(map[j][i] >0 ) return;
+                        if(map[i][j] >0 ) return;
                 break;
             case 1:
                 for (int i = YPlusPtit+2; i < YPlusPtit+4; i++)for (int j = XPlusPtit; j < XPlusPtit+2; j++)
-                        if(map[j][i] >0 ) return;
+                        if(map[i][j] >0 ) return;
                 break;
             }
             break;
@@ -432,94 +437,120 @@ void bloc::RotationBloc(){
             switch (rotation){
                 case 0:
                     for (int i = YPlusPtit; i < YPlusPtit+2; i++)for (int j = XPlusPtit+2; j < XPlusPtit+3; j++)
-                            if(map[j][i] >0 ) return;
+                            if(map[i][j] >0 ) return;
                     break;
                 case 1:
                     for (int i = YPlusPtit+2; i < YPlusPtit+3; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++)
-                        if(map[j][i] >0 ) return;
+                        if(map[i][j] >0 ) return;
                     break;
             }
             break;
     }
 
+
+
     //Initialiser le tableau Pour rotate
-    for(int i = 0; i < 4; i++) for(int j = 0; j < 4; j++) tab16Cases[j][i] = 0;
+    for(int i = 0; i < 4; i++) for(int j = 0; j < 4; j++) tab16Cases[i][j] = 0;
 
     //On initialise tab16case avec map
 
-     switch (NbBloc){
+    switch (NbBloc){
         case 0:
             switch (rotation){
                 case 0:
-                    for(int i = 0; i < 4; i++)for(int j = 0; j < 2; j++)tab16Cases[j][i] = map[XPlusPtit+j][YPlusPtit+i];
+                    for(int i = 0; i < 4; i++)for(int j = 0; j < 2; j++)tab16Cases[j][i] = map[YPlusPtit+i][XPlusPtit+j];
                     break;
                 case 1:
-                    for(int i = 0; i < 2; i++)for(int j = 0; j < 4; j++)tab16Cases[j][i] = map[XPlusPtit+j][YPlusPtit+i];
+                    for(int i = 0; i < 2; i++)for(int j = 0; j < 4; j++)tab16Cases[j][i] = map[YPlusPtit+i][XPlusPtit+j];
                     break;
             }
             break;
         default:
             switch (rotation){
                 case 0:
-                    for(int i = 0; i < 3; i++)for(int j = 0; j < 2; j++)tab16Cases[j][i] = map[XPlusPtit+j][YPlusPtit+i];
+                    for(int i = 0; i < 3; i++)for(int j = 0; j < 2; j++)tab16Cases[j][i] = map[YPlusPtit+i][XPlusPtit+j];
                     break;
                 case 1:
-                    for(int i = 0; i < 2; i++) for(int j = 0; j < 3; j++)tab16Cases[j][i] = map[XPlusPtit+j][YPlusPtit+i];
+                    for(int i = 0; i < 2; i++) for(int j = 0; j < 3; j++)tab16Cases[j][i] = map[YPlusPtit+i][XPlusPtit+j];
                     break;
             }
             break;
     }
+
+
 
 
     //Rotation
 
-    for(int i=0;i<4;i++)for(int j=0;j<4;j++) tab16CasesR[j][3-i]=tab16Cases[i][j];
-    for(int i=0;i<4;i++)for(int j=0;j<4;j++) tab16Cases[j][i]=tab16CasesR[j][i];
+    for(int i=0;i<4;i++)for(int j=0;j<4;j++) tab16CasesR[i][3-j]=tab16Cases[i][j];
+    for(int i=0;i<4;i++)for(int j=0;j<4;j++) tab16Cases[i][j]=tab16CasesR[i][j];
     
 
+std::cout << "TableCaseR";
+for(int i=0;i<4;i++){
+    for(int j=0;j<4;j++){ std::cout << tab16CasesR[i][j];} 
+    std::cout <<  std::endl;
+}
+std::cout << std::endl;
 
-    while(CheckLineLineRotateH(tab16Cases)) SuppLineRotateH(tab16Cases);
-    while(CheckLineLineRotateV(tab16Cases)) SuppLineRotateV(tab16Cases);
+    while(CheckLineLineRotateH(tab16Cases)){
+        SuppLineRotateH(tab16Cases);
+    }
+    while(CheckLineLineRotateV(tab16Cases)){
+        SuppLineRotateV(tab16Cases);
+    }
 
+std::cout << "TableCase";
+for(int i=0;i<4;i++)for(int j=0;j<4;j++) std::cout << tab16Cases[i][j] << std::endl;
 
+std::cout << "Message de debug1" << std::endl;
     // Efface le contenu de map 
 
     switch(NbBloc){
         case 0:
-            for (int i = YPlusPtit; i < YPlusPtit+4; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++)map[j][i] = 0;       
-            for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+4; j++)map[j][i] = 0;
+            for (int i = YPlusPtit; i < YPlusPtit+4; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++)map[i][j] = 0;       
+            for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+4; j++)map[i][j] = 0;
             break;
         default:
-            for (int i = YPlusPtit; i < YPlusPtit+3; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++)map[j][i] = 0;
-            for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+3; j++)map[j][i] = 0;
+            for (int i = YPlusPtit; i < YPlusPtit+3; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++)map[i][j] = 0;
+            for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+3; j++)map[i][j] = 0;
             break;
     }
 
 
+std::cout << "Message de debug2" << std::endl;
     // Tab dans map
 
     
     switch (NbBloc){
     case 0:
-        for (int i = YPlusPtit; i < YPlusPtit+4; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++) map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
-        for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+4; j++) map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
+        for (int i = YPlusPtit; i < YPlusPtit+4; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++) map[i][j] = tab16Cases[i-YPlusPtit][j-XPlusPtit];
+        for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+4; j++) map[i][j] = tab16Cases[i-YPlusPtit][j-XPlusPtit];
         break;
     
     default:
-        for (int i = YPlusPtit; i < YPlusPtit+3; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++) map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
-        for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+3; j++) map[j][i] = tab16Cases[j-XPlusPtit][i-YPlusPtit];
+        for (int i = YPlusPtit; i < YPlusPtit+3; i++)for(int j = XPlusPtit; j < XPlusPtit+2; j++) map[i][j] = tab16Cases[i-YPlusPtit][j-XPlusPtit];
+        for (int i = YPlusPtit; i < YPlusPtit+2; i++)for(int j = XPlusPtit; j < XPlusPtit+3; j++) map[i][j] = tab16Cases[i-YPlusPtit][j-XPlusPtit];
         break;
     }
     int k = 0;
 
+    VoirLeTableau();
+
     //Initiation des poses en fonction du bloc (a optimiser si pas flemme) switch case:
+
+    std::cout << PosTot.X1 << " " << PosTot.X2 << " " << PosTot.X3 << " " << PosTot.X4 << std::endl; 
+    std::cout << PosTot.Y1 << " " << PosTot.Y2 << " " << PosTot.Y3 << " " << PosTot.Y4 << std::endl; 
+
+    std::cout << YPlusPtit << std::endl;
+    std::cout << XPlusPtit << std::endl;
 
     switch (NbBloc){
         case 0:
             switch (rotation){
                 case 0:
                     for (int i = YPlusPtit; i < YPlusPtit+2; i++){for(int j = XPlusPtit; j < XPlusPtit+4; j++){
-                        if(map[j][i] > 0){
+                        if(map[i][j] > 0){
                             switch (k){
                                 case 0:
                                     PosTot.X1 = j; PosTot.Y1 = i; k++;
@@ -541,7 +572,7 @@ void bloc::RotationBloc(){
                 
                 case 1:
                     for (int i = YPlusPtit; i < YPlusPtit+4; i++){for(int j = XPlusPtit; j < XPlusPtit+2; j++){
-                        if(map[j][i] > 0){
+                        if(map[i][j] > 0){
                             switch (k){
                                 case 0:
                                     PosTot.X1 = j; PosTot.Y1 = i; k++;
@@ -567,7 +598,7 @@ void bloc::RotationBloc(){
             switch (rotation){
                 case 0:
                     for (int i = YPlusPtit; i < YPlusPtit+2; i++){for(int j = XPlusPtit; j < XPlusPtit+3; j++){
-                        if(map[j][i] > 0){
+                        if(map[i][j] > 0){
                             switch (k){
                                 case 0:
                                     PosTot.X1 = j; PosTot.Y1 = i; k++;
@@ -589,7 +620,7 @@ void bloc::RotationBloc(){
                 
                 case 1:
                     for (int i = YPlusPtit; i < YPlusPtit+3; i++){for(int j = XPlusPtit; j < XPlusPtit+2; j++){
-                        if(map[j][i] > 0){
+                        if(map[i][j] > 0){
                             switch (k){
                                 case 0:
                                     PosTot.X1 = j; PosTot.Y1 = i; k++;
@@ -611,6 +642,12 @@ void bloc::RotationBloc(){
                 }
             break;
     }
+
+
+    std::cout << PosTot.X1 << " " << PosTot.X2 << " " << PosTot.X3 << " " << PosTot.X4 << std::endl; 
+
+    std::cout << PosTot.Y1 << " " << PosTot.Y2 << " " << PosTot.Y3 << " " << PosTot.Y4 << std::endl; 
+    std::cout << rotation << std::endl;
     rotation++;
     rotation %= 2;
 }
@@ -618,16 +655,24 @@ void bloc::RotationBloc(){
 bool bloc::CheckLineLineRotateH(int (&Tab)[4][4]){
 
 
-    int Count = 0; bool Finito = true;
+    int Count = 0; 
+    bool Finito = false;
+
+for (int i = 0; i < 4; i++){
+    for (int j = 0; j < 4; j++){
+        std::cout <<    Tab[i][j];
+
+}std::cout << "\n";}
+
 
     for(int i=0;i<4;i++){
         Count = 0;
         for(int j=0;j<4;j++){ 
-            if(i == 0 && (Tab[j][i] >= 1)){
+            if(i == 0 && (Tab[i][j] >= 1)){
                 Finito = true;
                 break;
             }
-            if(Tab[j][i] == 0) Count++;
+            if(Tab[i][j] == 0) Count++;
             else break;
         }         
         if(Count == 4) return true;
@@ -654,9 +699,12 @@ bool bloc::CheckLineLineRotateV(int (&Tab)[4][4]){
         }
         if (Finito) break;
         if(Count == 4){
+            std::cout << "V" << std::endl;
             return true;
         }
     }
+
+    std::cout <<"Count: " << Count << std::endl;
     return false;
 }
 
@@ -669,16 +717,36 @@ void bloc::SuppLineRotateH(int Tab[4][4]){
         }
     }
 
-    for(int i=0;i<4;i++)for(int j=1;j<4;j++) Tab[i][j] = 0; 
-    for(int i=0;i<4;i++)for(int j=1;j<4;j++) Tab[i][j-1] = Tab2[i][j]; 
 
+
+    for(int i=0;i<4;i++)for(int j=1;j<4;j++) Tab[i][j] = 0; 
+    for(int i=0;i<4;i++)for(int j=1;j<4;j++) Tab[i-1][j] = Tab2[i][j]; 
+
+
+for (int i = 0; i < 4; i++){
+    for (int j = 0; j < 4; j++){
+        std::cout <<    Tab[i][j];
+
+}
+std::cout << "\n";
+    }
 }
 
 void bloc::SuppLineRotateV(int Tab[4][4]) {
     int Tab2[4][4];    
     for(int i=0;i<4;i++) for(int j=0;j<4;j++) Tab2[i][j] = Tab[i][j];
     for(int i=0;i<4;i++) for(int j=1;j<4;j++) Tab[i][j] = 0; 
-    for(int i=0;i<4;i++) for(int j=0;j<4;j++) Tab[i-1][j] = Tab2[i][j]; 
+    for(int i=0;i<4;i++) for(int j=0;j<4;j++) Tab[i][j-1] = Tab2[i][j]; 
+
+
+    
+        for (int i = 0; i < 4; i++){
+            for (int j = 0; j < 4; j++){
+                std::cout <<    Tab[i][j];
+
+        }
+        std::cout << "\n";
+            }
 }
 
 
@@ -810,16 +878,16 @@ void bloc::VisualiserBloc(){
 
         int Y = i-YPlusGrand;
         if(
-            (map[PosTot.X1][PosTot.Y1 + Y] == 0) &&
-            (map[PosTot.X2][PosTot.Y2 + Y] == 0) &&
-            (map[PosTot.X3][PosTot.Y3 + Y] == 0) &&
-            (map[PosTot.X4][PosTot.Y4 + Y] == 0)
+            (map[PosTot.Y1 + Y][PosTot.X1] == 0) &&
+            (map[PosTot.Y2 + Y][PosTot.X2] == 0) &&
+            (map[PosTot.Y3 + Y][PosTot.X3] == 0) &&
+            (map[PosTot.Y4 + Y][PosTot.X4] == 0)
         && 
             ((
-                (map[PosTot.X1][PosTot.Y1 + Y+1] >=1)||
-                (map[PosTot.X2][PosTot.Y2 + Y+1] >=1)||
-                (map[PosTot.X3][PosTot.Y3 + Y+1] >=1)||
-                (map[PosTot.X4][PosTot.Y4 + Y+1] >=1)
+                (map[PosTot.Y1 + Y+1][PosTot.X1] >=1)||
+                (map[PosTot.Y2 + Y+1][PosTot.X2] >=1)||
+                (map[PosTot.Y3 + Y+1][PosTot.X3] >=1)||
+                (map[PosTot.Y4 + Y+1][PosTot.X4] >=1)
             
             )
             || 
